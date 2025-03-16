@@ -1,5 +1,5 @@
 export class User {
-    name: string | undefined;
-    username: string | undefined;
-    email: string | undefined;
+    name?: string;
+    username?: string;
+    email?: string;
 }

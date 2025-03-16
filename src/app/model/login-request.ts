@@ -1,4 +1,4 @@
 class LoginRequest {
-    email: string | undefined;
-    password: string | undefined;
+    email?: string;
+    password?: string;
 }
