@@ -3,6 +3,8 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../../model/user';
+import { LoginRequest } from "../../model/login-request";
+import { BehaviorSubject } from 'rxjs';
 
 const ACCESS_TOKEN_KEY = "accessToken";
 
@@ -12,6 +14,9 @@ const ACCESS_TOKEN_KEY = "accessToken";
 export class AuthService {
     private jwtHelper = new JwtHelperService();
     private decodedToken: any;
+
+    private _authStatus = new BehaviorSubject<boolean>(false);
+    authStatus$ = this._authStatus.asObservable();
 
     constructor(
         private router: Router,
@@ -27,6 +32,8 @@ export class AuthService {
         this.http.post('api/v1/auth/authenticate', login).subscribe( {
             next: (response: any) => {
                 this.saveTokenDetails(response.token);
+                console.log(response);
+                this._authStatus.next(true);
                 // this.router.navigateByUrl("/home");
             },
             error: (error) => {
@@ -39,10 +46,12 @@ export class AuthService {
         localStorage.removeItem(ACCESS_TOKEN_KEY);
         this.decodedToken = null;
         this.removeUserDetails();
+        this._authStatus.next(false);
     }
 
     public isAuthenticated(): boolean {
         const accessToken = this.getTokens().accessToken;
+        console.log('accessToken', accessToken);
         return accessToken != null && this.isTokenValid(accessToken);
     }
 
@@ -90,6 +99,6 @@ export class AuthService {
     }
 
     private isTokenValid(token: string) {
-        return this.jwtHelper.isTokenExpired(token);
+        return !this.jwtHelper.isTokenExpired(token);
     }
 }
