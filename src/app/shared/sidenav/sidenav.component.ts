@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { User } from '../../model/user';
 import { MatListItem, MatNavList } from '@angular/material/list';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
@@ -33,6 +33,19 @@ import { AsyncPipe } from '@angular/common';
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.css'
 })
-export class SidenavComponent {
+export class SidenavComponent implements OnInit {
     authService: AuthService = inject(AuthService);
+    authenticated = false;
+
+    ngOnInit() {
+        this.authService.authStatus$.subscribe(authStatus => {
+            this.authenticated = authStatus;
+        })
+    }
+
+    logout(): void {
+        this.authenticated = false;
+        this.authService.logout();
+    }
+
 }

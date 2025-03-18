@@ -4,21 +4,26 @@
                  [fixedBottomGap]="0">
 
         <mat-nav-list>
+            <div class="sidenav-content">
+                <div>
+                    <a mat-list-item routerLink="home">Home</a>
 
-            <a mat-list-item routerLink="home">Home</a>
+                    @if (authenticated) {
+                        <a mat-list-item>{{authService.getUserDetails().username}}</a>
+                    } @else {
+                        <a mat-list-item routerLink="login">Login</a>
+                    }
 
-            @if (authService.authStatus$ | async) {
-                <a mat-list-item>{{authService.getUserDetails().username}}</a>
-            } @else {
-                <a mat-list-item routerLink="login">Login</a>
-            }
+                    <a mat-list-item routerLink="user/profile">User Profile</a>
 
-            <a mat-list-item routerLink="user/profile">User Profile</a>
+                </div>
 
-            @if (authService.authStatus$ | async) {
-                <a mat-list-item (click)="authService.logout()">Logout</a>
-            }
-
+                <div>
+                    @if (authenticated) {
+                        <a mat-list-item (click)="logout()">Logout</a>
+                    }
+                </div>
+            </div>
         </mat-nav-list>
     </mat-sidenav>
 

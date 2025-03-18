@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../../model/user';
 import { LoginRequest } from "../../model/login-request";
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 const ACCESS_TOKEN_KEY = "accessToken";
 
@@ -22,10 +22,13 @@ export class AuthService {
         private router: Router,
         private http: HttpClient
     ) {
+
         const token = this.getTokens().accessToken;
         if (token) {
             this.decodeToken(token);
         }
+        this._authStatus.next(this.isAuthenticated());
+        console.log(this.authStatus$);
     }
 
     public login(login: LoginRequest) {
