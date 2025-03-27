@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { User } from '../../model/user';
+import { UserJwt } from '../../model/user';
 import { LoginRequest } from "../../model/login-request";
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 const ACCESS_TOKEN_KEY = "accessToken";
 
@@ -58,7 +58,7 @@ export class AuthService {
         return accessToken != null && this.isTokenValid(accessToken);
     }
 
-    public getUserDetails(): User {
+    public getUserDetails(): UserJwt {
         let user = localStorage.getItem("user");
         if (user) {
             return JSON.parse(user);
@@ -80,7 +80,7 @@ export class AuthService {
         this.setUserDetails({ username: username, name: name, email: email })
     }
 
-    private setUserDetails(user: User) {
+    private setUserDetails(user: UserJwt) {
         localStorage.setItem("user", JSON.stringify(user));
     }
 
