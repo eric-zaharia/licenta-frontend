@@ -28,14 +28,12 @@ export class AuthService {
             this.decodeToken(token);
         }
         this._authStatus.next(this.isAuthenticated());
-        console.log(this.authStatus$);
     }
 
     public login(login: LoginRequest) {
         this.http.post('api/v1/auth/authenticate', login).subscribe( {
             next: (response: any) => {
                 this.saveTokenDetails(response.token);
-                console.log(response);
                 this._authStatus.next(true);
                 // this.router.navigateByUrl("/home");
             },
@@ -54,7 +52,6 @@ export class AuthService {
 
     public isAuthenticated(): boolean {
         const accessToken = this.getTokens().accessToken;
-        console.log('accessToken', accessToken);
         return accessToken != null && this.isTokenValid(accessToken);
     }
 
@@ -69,6 +66,10 @@ export class AuthService {
             name: "",
             email: ""
         };
+    }
+
+    public getTokens(): any {
+        return { accessToken: localStorage.getItem(ACCESS_TOKEN_KEY) }
     }
 
     private saveTokenDetails(token: string) {
@@ -91,10 +92,6 @@ export class AuthService {
     private setToken(token: string) {
         localStorage.setItem(ACCESS_TOKEN_KEY, token);
         this.decodeToken(token);
-    }
-
-    private getTokens(): any {
-        return { accessToken: localStorage.getItem(ACCESS_TOKEN_KEY) }
     }
 
     private decodeToken(token: string): void {

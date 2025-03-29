@@ -10,6 +10,8 @@
 
                     @if (authenticated) {
                         <a mat-list-item routerLink="user/profile">User Profile</a>
+                        <a mat-list-item routerLink="passwords">My Passwords</a>
+                        <a mat-list-item routerLink="password/add">Add a password</a>
                     } @else {
                         <a mat-list-item routerLink="login">Login</a>
                     }
