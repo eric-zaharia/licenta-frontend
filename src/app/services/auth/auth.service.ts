@@ -48,6 +48,7 @@ export class AuthService {
         this.decodedToken = null;
         this.removeUserDetails();
         this._authStatus.next(false);
+        this.router.navigateByUrl('/home');
     }
 
     public isAuthenticated(): boolean {

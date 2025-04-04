@@ -27,7 +27,7 @@ import { AsyncPipe } from '@angular/common';
         MatListItem,
         RouterLink,
         RouterOutlet,
-        AsyncPipe,
+
     ],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.css'
