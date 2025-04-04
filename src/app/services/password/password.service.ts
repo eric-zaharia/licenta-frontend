@@ -15,4 +15,7 @@ export class PasswordService {
         return this.http.get('api/v1/password/all/user');
     }
 
+    uploadPassword(body: {}) {
+        return this.http.post('api/v1/password', body);
+    }
 }
