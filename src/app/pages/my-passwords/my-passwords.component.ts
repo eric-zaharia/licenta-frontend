@@ -7,6 +7,7 @@ import {
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
 } from '@angular/material/expansion';
+import { MatButton } from "@angular/material/button";
 
 @Component({
     selector: 'app-my-passwords',
@@ -16,7 +17,8 @@ import {
         MatExpansionPanel,
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
-        MatExpansionPanelDescription
+        MatExpansionPanelDescription,
+        MatButton
     ],
     templateUrl: './my-passwords.component.html',
     styleUrl: './my-passwords.component.css'
@@ -26,13 +28,35 @@ export class MyPasswordsComponent implements OnInit {
     passwords: any[] = [];
     panelOpenState: any[] = [];
 
+    shards: any[] = [];
+    requiredForDecryption: any[] = [];
+    decryptedPassword: string[] = [];
+
     ngOnInit() {
         this.passwordService.getAllUserPasswords().subscribe((passwords: any) => {
             this.passwords = passwords;
             for (let i = 0; i < passwords.length; i++) {
                 this.panelOpenState.push(signal(false));
+                this.shards.push([]);
+                this.requiredForDecryption.push(0);
+                this.decryptedPassword.push("");
             }
             console.log(passwords);
+        })
+    }
+
+    getAvailableShards(passwordId: any) {
+        let index = this.passwords.findIndex(password => password.id == passwordId);
+        this.passwordService.getPassword(passwordId).subscribe((response: any) => {
+            this.shards[index] = response.shards;
+            this.requiredForDecryption[index] = response.required;
+        })
+    }
+
+    decryptPassword(passwordId: any) {
+        let index = this.passwords.findIndex(password => password.id == passwordId);
+        this.passwordService.reconstructPassword(this.shards[index]).then(pw => {
+            this.decryptedPassword[index] = pw;
         })
     }
 }

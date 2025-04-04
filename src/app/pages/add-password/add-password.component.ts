@@ -46,8 +46,6 @@ export class AddPasswordComponent implements OnInit {
         }),
     });
 
-    toUint8Array = (data: string) => new TextEncoder().encode(data);
-
     ngOnInit() {
         this.secondFormGroup.get('userShards')?.valueChanges.subscribe(value => {
             const shardsCount = parseInt(value ?? '0', 10);
@@ -80,7 +78,7 @@ export class AddPasswordComponent implements OnInit {
         }
 
         let shards: string[];
-        this.getShamirShards(password, shardsNo).then(resultedShards => {
+        this.passwordService.getShamirShards(password, shardsNo).then(resultedShards => {
             shards = resultedShards;
             let selfCustodyShardsNo = parseInt(this.secondFormGroup.value.userShards ?? '0');
             let mailRecipients = this.secondFormGroup.value.emailSection?.emails;
@@ -92,45 +90,6 @@ export class AddPasswordComponent implements OnInit {
                 selfCustodyShardsNo: selfCustodyShardsNo
             }).subscribe();
         });
-    }
-
-    async reconstructPassword(shards: string[]) {
-        const uint8Shards = shards.map(sh => this.base64DecodeUnicode(sh));
-        return new TextDecoder().decode(await combine(uint8Shards));
-    }
-
-    async getShamirShards(password: string, shardsNo: number) {
-        const secret = this.toUint8Array(password);
-        const shardsUint8 = await split(secret, shardsNo, Math.floor(shardsNo / 2) + 1);
-
-        return shardsUint8.map(sh => this.base64EncodeUnicode(sh));
-    }
-
-    async testShamir(password: string) {
-        console.log(password);
-        const secret = this.toUint8Array(password);
-        const [share1, share2, share3] = await split(secret, 3, 2);
-        console.log("Shares: ", share1, " ", share2, " ", share3);
-        const reconstructed = await combine([share2, share1]);
-        let reconstructedPassword = new TextDecoder().decode(reconstructed);
-        console.log("Reconstructed: ", reconstructedPassword);
-    }
-
-    base64EncodeUnicode(utf8Bytes: Uint8Array<ArrayBuffer>): string {
-        let binary = '';
-        for (let i = 0; i < utf8Bytes.length; i++) {
-            binary += String.fromCharCode(utf8Bytes[i]);
-        }
-        return btoa(binary);
-    }
-
-    base64DecodeUnicode(base64: string): Uint8Array<ArrayBuffer> {
-        const binary = atob(base64);
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) {
-            bytes[i] = binary.charCodeAt(i);
-        }
-        return bytes;
     }
 
     get range() {
