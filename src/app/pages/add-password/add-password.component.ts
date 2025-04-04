@@ -82,15 +82,26 @@ export class AddPasswordComponent implements OnInit {
             shards = resultedShards;
             let selfCustodyShardsNo = parseInt(this.secondFormGroup.value.userShards ?? '0');
             let mailRecipients = this.secondFormGroup.value.emailSection?.emails;
-            this.passwordService.uploadPassword({
-                label: label,
-                shards: shards,
-                mailRecipients: mailRecipients,
-                shardsNo: shardsNo,
-                selfCustodyShardsNo: selfCustodyShardsNo
-            }).subscribe();
+            if (selfCustodyShardsNo !== shardsNo) {
+                this.passwordService.uploadPassword({
+                    label: label,
+                    shards: shards,
+                    mailRecipients: mailRecipients,
+                    shardsNo: shardsNo,
+                    selfCustodyShardsNo: selfCustodyShardsNo
+                }).subscribe();
+            }
         });
     }
+    // async testShamir(password: string) {
+    //     console.log(password);
+    //     const secret = this.toUint8Array(password);
+    //     const [share1, share2, share3] = await split(secret, 3, 2);
+    //     console.log("Shares: ", share1, " ", share2, " ", share3);
+    //     const reconstructed = await combine([share2, share1]);
+    //     let reconstructedPassword = new TextDecoder().decode(reconstructed);
+    //     console.log("Reconstructed: ", reconstructedPassword);
+    // }
 
     get range() {
         const count = Number(this.firstFormGroup.value.shardsNo) || 0;

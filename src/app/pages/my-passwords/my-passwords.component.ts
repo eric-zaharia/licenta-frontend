@@ -8,6 +8,9 @@ import {
     MatExpansionPanelTitle
 } from '@angular/material/expansion';
 import { MatButton } from "@angular/material/button";
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-my-passwords',
@@ -18,7 +21,11 @@ import { MatButton } from "@angular/material/button";
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
         MatExpansionPanelDescription,
-        MatButton
+        MatButton,
+        MatLabel,
+        MatFormField,
+        MatInput,
+        FormsModule
     ],
     templateUrl: './my-passwords.component.html',
     styleUrl: './my-passwords.component.css'
@@ -29,8 +36,11 @@ export class MyPasswordsComponent implements OnInit {
     panelOpenState: any[] = [];
 
     shards: any[] = [];
+    // selfCustodyShards: any[] = [];
     requiredForDecryption: any[] = [];
     decryptedPassword: string[] = [];
+
+    currentSelfCustodyShard: any[] = [];
 
     ngOnInit() {
         this.passwordService.getAllUserPasswords().subscribe((passwords: any) => {
@@ -38,6 +48,8 @@ export class MyPasswordsComponent implements OnInit {
             for (let i = 0; i < passwords.length; i++) {
                 this.panelOpenState.push(signal(false));
                 this.shards.push([]);
+                // this.selfCustodyShards.push([]);
+                this.currentSelfCustodyShard.push("");
                 this.requiredForDecryption.push(0);
                 this.decryptedPassword.push("");
             }
@@ -58,5 +70,10 @@ export class MyPasswordsComponent implements OnInit {
         this.passwordService.reconstructPassword(this.shards[index]).then(pw => {
             this.decryptedPassword[index] = pw;
         })
+    }
+
+    addSelfCustodyShard(passwordId: any, curr: string) {
+        let index = this.passwords.findIndex(password => password.id == passwordId);
+        this.shards[index].push(curr);
     }
 }
