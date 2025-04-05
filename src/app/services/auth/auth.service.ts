@@ -5,6 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { UserJwt } from '../../model/user';
 import { LoginRequest } from "../../model/login-request";
 import { BehaviorSubject } from 'rxjs';
+import { RegisterRequest } from '../../model/register-request';
+import { RegisterComponent } from '../../pages/register/register.component';
 
 const ACCESS_TOKEN_KEY = "accessToken";
 
@@ -30,15 +32,26 @@ export class AuthService {
         this._authStatus.next(this.isAuthenticated());
     }
 
+    public register(register: RegisterRequest) {
+        this.http.post('api/v1/auth/register', register).subscribe({
+            next: (response: any) => {
+                this.router.navigateByUrl('/login');
+            },
+            error: (error) => {
+                console.log(error);
+            }
+        })
+    }
+
     public login(login: LoginRequest) {
         this.http.post('api/v1/auth/authenticate', login).subscribe( {
             next: (response: any) => {
                 this.saveTokenDetails(response.token);
                 this._authStatus.next(true);
-                // this.router.navigateByUrl("/home");
+                this.router.navigateByUrl("/home");
             },
             error: (error) => {
-                // show error message
+                console.log(error);
             }
         });
     }

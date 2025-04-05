@@ -52,8 +52,6 @@ export class LoginComponent {
                 email: this.email.value !== null? this.email.value : "",
                 password: this.password.value !== null ? this.password.value : "",
             });
-
-        this.router.navigateByUrl('home');
     }
 
     clickEvent(event: MouseEvent) {
