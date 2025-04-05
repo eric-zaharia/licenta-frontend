@@ -8,6 +8,7 @@ import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/f
 import { MatInput } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 
 @Component({
   selector: 'app-reset-password',
@@ -20,7 +21,12 @@ import { MatIcon } from '@angular/material/icon';
         ReactiveFormsModule,
         MatIconButton,
         MatIcon,
-        MatSuffix
+        MatSuffix,
+        MatCardTitle,
+        MatCardHeader,
+        MatCardContent,
+        MatCardActions,
+        MatCard
     ],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.css'

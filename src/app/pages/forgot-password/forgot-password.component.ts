@@ -6,6 +6,8 @@ import { merge } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { HttpClient } from '@angular/common/http';
+import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
@@ -15,7 +17,12 @@ import { HttpClient } from '@angular/common/http';
         ReactiveFormsModule,
         MatInput,
         MatError,
-        MatButton
+        MatButton,
+        MatCardTitle,
+        MatCardHeader,
+        MatCardContent,
+        MatCardActions,
+        MatCard
     ],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css'
@@ -26,7 +33,8 @@ export class ForgotPasswordComponent {
     errorMessage = signal('');
 
     constructor(
-        private http: HttpClient
+        private http: HttpClient,
+        private router: Router,
     ) {
         merge(this.email.statusChanges, this.email.valueChanges)
             .pipe(takeUntilDestroyed())
@@ -44,6 +52,13 @@ export class ForgotPasswordComponent {
     }
 
     submit() {
-        this.http.post('api/v1/auth/forgot-password', {email: this.email.value}).subscribe();
+        this.http.post('api/v1/auth/forgot-password', {email: this.email.value}).subscribe({
+            next: data => {
+                this.router.navigateByUrl('/home');
+            },
+            error: error => {
+                this.errorMessage.set('Something went wrong');
+            }
+        });
     }
 }

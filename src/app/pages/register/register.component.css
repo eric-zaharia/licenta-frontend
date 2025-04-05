@@ -1,35 +1,26 @@
-/* register.component.scss or a global stylesheet */
-
-/*
-   Background & layout to mimic the login page,
-   but placed near the top for a natural flow.
-*/
 .register-container {
-    background: #f3f4f6;    /* Same neutral background as login page */
-    min-height: 100vh;      /* Fill viewport height */
+    background: #f3f4f6;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;  /* Center horizontally */
+    justify-content: center;
     align-items: flex-start;
     padding-top: 3rem;
 }
 
-/* Use the same card style you used for the login page */
 .register-card {
     width: 100%;
     max-width: 400px;
     padding: 2rem;
-    border-radius: 8px; /* Slightly rounded corners */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Subtle shadow */
-    background-color: #fff; /* White card background */
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
 }
 
-/* Ensure form fields are full width and spaced nicely */
 mat-form-field {
     width: 100%;
     margin-bottom: 1rem;
 }
 
-/* Title styling to match login page */
 mat-card-title {
     font-size: 1.5rem;
     margin-bottom: 1rem;
@@ -37,9 +28,8 @@ mat-card-title {
     color: #333;
 }
 
-/* Footer spacing (if needed) */
 mat-card-footer {
     margin-top: 1rem;
     display: flex;
-    justify-content: flex-end; /* or space-between if you had multiple buttons */
+    justify-content: flex-end;
 }
