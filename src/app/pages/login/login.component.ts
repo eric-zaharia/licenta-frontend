@@ -32,7 +32,7 @@ import { routes } from '../../app.routes';
 })
 export class LoginComponent {
     readonly email = new FormControl('', [Validators.required, Validators.email]);
-    readonly password = new FormControl('');
+    readonly password = new FormControl('', [Validators.required]);
 
     errorMessage = signal('');
     hide = signal(true);

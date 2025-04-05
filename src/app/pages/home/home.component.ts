@@ -8,6 +8,4 @@ import { AuthService } from '../../services/auth/auth.service';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-    private authService: AuthService = inject(AuthService);
-    public xx = this.authService.isAuthenticated();
 }

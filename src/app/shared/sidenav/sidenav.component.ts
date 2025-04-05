@@ -9,6 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AuthService } from '../../services/auth/auth.service';
 import { MatListItem, MatNavList } from '@angular/material/list';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-sidenav',
@@ -25,6 +26,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
         MatListItem,
         RouterLink,
         RouterOutlet,
+        MatIcon,
 
     ],
   templateUrl: './sidenav.component.html',
