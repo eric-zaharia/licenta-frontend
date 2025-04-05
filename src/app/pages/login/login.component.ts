@@ -70,4 +70,8 @@ export class LoginComponent {
             this.errorMessage.set('');
         }
     }
+
+    forgotPassword() {
+        this.router.navigateByUrl("forgot-password")
+    }
 }

@@ -16,7 +16,6 @@ import { FormsModule } from '@angular/forms';
     selector: 'app-my-passwords',
     imports: [
         MatList,
-        MatListItem,
         MatExpansionPanel,
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
@@ -36,7 +35,7 @@ export class MyPasswordsComponent implements OnInit {
     panelOpenState: any[] = [];
 
     shards: any[] = [];
-    // selfCustodyShards: any[] = [];
+    selfCustodyShards: any[] = [];
     requiredForDecryption: any[] = [];
     decryptedPassword: string[] = [];
 
@@ -48,7 +47,7 @@ export class MyPasswordsComponent implements OnInit {
             for (let i = 0; i < passwords.length; i++) {
                 this.panelOpenState.push(signal(false));
                 this.shards.push([]);
-                // this.selfCustodyShards.push([]);
+                this.selfCustodyShards.push(0);
                 this.currentSelfCustodyShard.push("");
                 this.requiredForDecryption.push(0);
                 this.decryptedPassword.push("");
@@ -61,7 +60,8 @@ export class MyPasswordsComponent implements OnInit {
         let index = this.passwords.findIndex(password => password.id == passwordId);
         this.passwordService.getPassword(passwordId).subscribe((response: any) => {
             this.shards[index] = response.shards;
-            this.requiredForDecryption[index] = response.required;
+            this.requiredForDecryption[index] = response.required - this.shards[index].length;
+            this.selfCustodyShards[index] = response.selfCustodyShardsNo;
         })
     }
 
@@ -75,5 +75,6 @@ export class MyPasswordsComponent implements OnInit {
     addSelfCustodyShard(passwordId: any, curr: string) {
         let index = this.passwords.findIndex(password => password.id == passwordId);
         this.shards[index].push(curr);
+        this.requiredForDecryption[index] -= 1;
     }
 }
