@@ -8,8 +8,10 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AuthService } from '../../services/auth/auth.service';
 import { MatListItem, MatNavList } from '@angular/material/list';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import { MatDivider } from '@angular/material/divider';
+import { MatLine } from '@angular/material/core';
 
 @Component({
   selector: 'app-sidenav',
@@ -27,6 +29,9 @@ import { MatIcon } from '@angular/material/icon';
         RouterLink,
         RouterOutlet,
         MatIcon,
+        MatDivider,
+        RouterLinkActive,
+        MatLine,
 
     ],
   templateUrl: './sidenav.component.html',

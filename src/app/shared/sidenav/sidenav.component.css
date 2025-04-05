@@ -5,33 +5,71 @@
     height: 100%;
 }
 
-.example-sidenav {
+.toolbar-container {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    width: 200px;
-    background: rgba(118, 212, 239, 0.5);
-    /*background: #f3f4f6;*/
-
+    justify-content: space-between;
+    width: 100%;
 }
 
-.sidenav-content {
+.icon-name-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.modern-sidenav {
+    width: 240px;
+    background-color: #4c97f4;
+    color: #fff;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+    padding: 0;
 }
 
-.example-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+.sidenav-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
 }
 
-.example-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+.app-name {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.mat-divider {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+mat-nav-list a.mat-list-item {
+    color: #fff;
+    font-weight: 500;
+}
+
+.active-link {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+mat-nav-list a.mat-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidenav-footer {
+    margin-top: auto;   /* Pushes footer to bottom */
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.logout-button {
+    color: #fff;
+    font-weight: 500;
+}
+
+mat-sidenav-content {
+    background: #f3f4f6;
 }
