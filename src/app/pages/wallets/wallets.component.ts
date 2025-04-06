@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { WalletService } from '../../services/wallet/wallet.service';
 import { MatCard, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -30,8 +30,8 @@ import { Account } from '@multiversx/sdk-core/out';
   templateUrl: './wallets.component.html',
   styleUrl: './wallets.component.css'
 })
-export class WalletsComponent {
-    wallet?: Account;
+export class WalletsComponent implements OnInit {
+    wallet?: Account | null;
     readonly dialog = inject(MatDialog);
 
     constructor(
@@ -40,8 +40,8 @@ export class WalletsComponent {
     ) {
     }
 
-    addWallet() {
-        this.router.navigateByUrl('new-wallet');
+    ngOnInit() {
+        this.wallet = this.walletService.restoreWallet();
     }
 
     openDialog(): void {
@@ -93,14 +93,14 @@ export class AddWalletDialog {
         this.mnemonic = this.walletService.getMnemonic();
     }
 
-    getWallet(mnemonic: string) {
+    createWallet(mnemonic: string) {
         console.log(mnemonic);
         this.wallet = this.walletService.generateWallet(mnemonic);
     }
 
     onAddClick() {
         if (this.mnemonic && this.mnemonic != "") {
-            this.getWallet(this.mnemonic);
+            this.createWallet(this.mnemonic);
             this.dialogRef.close({wallet: this.wallet});
         }
     }

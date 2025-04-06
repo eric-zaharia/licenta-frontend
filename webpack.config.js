@@ -13,7 +13,7 @@ module.exports = {
             crypto: require.resolve('crypto-browserify'),
             stream: require.resolve('stream-browserify'),
             buffer: require.resolve('buffer/'),
-            process: require.resolve('process/browser')
+            process: require.resolve('process/browser'),
         }
     }
 };

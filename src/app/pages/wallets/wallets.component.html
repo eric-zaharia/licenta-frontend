@@ -7,7 +7,7 @@
             @if (wallet === undefined) {
                 <p>Import a wallet!</p>
             } @else {
-                <p>{{wallet.address.bech32()}}</p>
+                <p>{{wallet?.address?.bech32()}}</p>
             }
             <br><br>
         </mat-card-content>
