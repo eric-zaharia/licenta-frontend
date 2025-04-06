@@ -24,7 +24,6 @@ export class AuthService {
     constructor(
         private router: Router,
         private http: HttpClient,
-        private walletService: WalletService,
     ) {
 
         const token = this.getTokens().accessToken;
@@ -62,7 +61,6 @@ export class AuthService {
         localStorage.removeItem(ACCESS_TOKEN_KEY);
         this.decodedToken = null;
         this.removeUserDetails();
-        this.walletService.removeWalletData();
         this._authStatus.next(false);
         this.router.navigateByUrl('/home');
     }

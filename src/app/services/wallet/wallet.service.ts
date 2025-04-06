@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Account, Address, DevnetEntrypoint, Mnemonic } from '@multiversx/sdk-core/out';
+import { Account, Address, Mnemonic, TestnetEntrypoint } from '@multiversx/sdk-core/out';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
     providedIn: 'root',
 })
 export class WalletService {
-    private entrypoint: DevnetEntrypoint;
+    private entrypoint: TestnetEntrypoint;
     private controller;
     private account?: Account;
 
     constructor() {
-        this.entrypoint = new DevnetEntrypoint();
+        this.entrypoint = new TestnetEntrypoint();
         this.controller = this.entrypoint.createTransfersController();
     }
 
@@ -22,9 +22,11 @@ export class WalletService {
     removeWalletData() {
         localStorage.removeItem("encryptedMnemonic");
         sessionStorage.removeItem("decryptedWallet");
+
+        return null;
     }
 
-    restoreWallet() {
+    restoreWallet(userPassword: string) {
         const storedData = sessionStorage.getItem('decryptedWallet');
         if (storedData) {
             const { mnemonicString } = JSON.parse(storedData);
@@ -37,9 +39,7 @@ export class WalletService {
             return null;
         }
 
-        const userPassword = prompt("Enter your password to decrypt your wallet:");
         if (!userPassword) {
-            alert("Password is required.");
             return null;
         }
 
@@ -47,7 +47,6 @@ export class WalletService {
         const mnemonicString = bytes.toString(CryptoJS.enc.Utf8);
 
         if (!mnemonicString) {
-            alert("Invalid password or corrupted data.");
             return null;
         }
 
@@ -56,14 +55,15 @@ export class WalletService {
         return this.account;
     }
 
-    generateWallet(mnemonicString: string) {
+    generateWallet(mnemonicString: string, userPassword: string) {
+        console.log(userPassword);
         if (sessionStorage.getItem('decryptedWallet') != null) {
             sessionStorage.removeItem('decryptedWallet');
         }
 
         this.account = Account.newFromMnemonic(mnemonicString);
 
-        const userPassword = prompt("Enter a password to secure your wallet:");
+        // const userPassword = prompt("Enter a password to secure your wallet:");
         const encryptedMnemonic = CryptoJS.AES.encrypt(mnemonicString, userPassword).toString();
         console.log(encryptedMnemonic);
 

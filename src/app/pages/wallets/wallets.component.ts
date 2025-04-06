@@ -1,11 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { MatButton, MatButtonModule, MatIconButton } from '@angular/material/button';
 import { WalletService } from '../../services/wallet/wallet.service';
 import { MatCard, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { Router } from '@angular/router';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatInput, MatInputModule } from '@angular/material/input';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
     MAT_DIALOG_DATA, MatDialog,
     MatDialogActions,
@@ -16,6 +16,7 @@ import {
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { NgIf } from '@angular/common';
 import { Account } from '@multiversx/sdk-core/out';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-wallets',
@@ -25,14 +26,26 @@ import { Account } from '@multiversx/sdk-core/out';
         MatCardHeader,
         MatCardTitle,
         MatCardContent,
-        MatCardFooter
+        MatCardFooter,
+        MatLabel,
+        MatFormField,
+        MatInput,
+        MatIcon,
+        MatIconButton,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatButtonModule,
     ],
   templateUrl: './wallets.component.html',
   styleUrl: './wallets.component.css'
 })
 export class WalletsComponent implements OnInit {
     wallet?: Account | null;
+    locked = false;
     readonly dialog = inject(MatDialog);
+    userPassword: FormControl = new FormControl('');
 
     constructor(
         private walletService: WalletService,
@@ -41,7 +54,19 @@ export class WalletsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.wallet = this.walletService.restoreWallet();
+        this.wallet = this.walletService.restoreWallet(this.userPassword.value);
+    }
+
+    walletLocked() {
+        return sessionStorage.getItem("decryptedWallet") === null && this.existsWallet()
+    }
+
+    existsWallet(): boolean {
+        return localStorage.getItem("encryptedMnemonic") !== null;
+    }
+
+    removeWallet() {
+        this.wallet = this.walletService.removeWalletData();
     }
 
     openDialog(): void {
@@ -55,6 +80,16 @@ export class WalletsComponent implements OnInit {
                 this.wallet = result.wallet;
             }
         });
+    }
+
+    hide = signal(true);
+    clickEvent(event: MouseEvent) {
+        this.hide.set(!this.hide());
+        event.stopPropagation();
+    }
+
+    unlockWallet() {
+        this.wallet = this.walletService.restoreWallet(this.userPassword.value);
     }
 }
 
@@ -73,6 +108,8 @@ export class WalletsComponent implements OnInit {
         MatButtonToggle,
         MatButtonToggleGroup,
         NgIf,
+        ReactiveFormsModule,
+        MatIcon,
     ],
 })
 export class AddWalletDialog {
@@ -81,6 +118,7 @@ export class AddWalletDialog {
     readonly dialogRef = inject(MatDialogRef<AddWalletDialog>);
     readonly data = inject(MAT_DIALOG_DATA);
     selectedAction: string = "import";
+    userPassword: FormControl = new FormControl('');
 
     constructor(private walletService: WalletService) {
     }
@@ -95,7 +133,7 @@ export class AddWalletDialog {
 
     createWallet(mnemonic: string) {
         console.log(mnemonic);
-        this.wallet = this.walletService.generateWallet(mnemonic);
+        this.wallet = this.walletService.generateWallet(mnemonic, this.userPassword.value);
     }
 
     onAddClick() {
@@ -103,5 +141,11 @@ export class AddWalletDialog {
             this.createWallet(this.mnemonic);
             this.dialogRef.close({wallet: this.wallet});
         }
+    }
+
+    hide = signal(true);
+    clickEvent(event: MouseEvent) {
+        this.hide.set(!this.hide());
+        event.stopPropagation();
     }
 }
