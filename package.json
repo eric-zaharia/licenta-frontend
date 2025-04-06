@@ -20,7 +20,7 @@
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
     "@auth0/angular-jwt": "^5.2.0",
-    "@multiversx/sdk-core": "^13.17.2",
+    "@multiversx/sdk-core": "^14.0.2",
     "@primeng/themes": "^18.0.2",
     "bip39": "^3.1.0",
     "buffer": "^6.0.3",

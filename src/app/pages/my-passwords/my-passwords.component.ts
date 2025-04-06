@@ -52,7 +52,6 @@ export class MyPasswordsComponent implements OnInit {
                 this.requiredForDecryption.push(0);
                 this.decryptedPassword.push("");
             }
-            console.log(passwords);
         })
     }
 

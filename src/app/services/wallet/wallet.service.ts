@@ -1,19 +1,17 @@
 import { Injectable } from '@angular/core';
-import { ApiNetworkProvider, Mnemonic, UserWallet } from '@multiversx/sdk-core/out';
+import { Account, Address, DevnetEntrypoint, Mnemonic } from '@multiversx/sdk-core/out';
 
 @Injectable({
     providedIn: 'root',
 })
 export class WalletService {
-    private provider: ApiNetworkProvider;
+    private entrypoint: DevnetEntrypoint;
+    private controller;
+    private account?: Account;
 
     constructor() {
-        this.provider = new ApiNetworkProvider(
-            "https://testnet-api.multiversx.com",
-            {
-                clientName: "multiversx-licenta"
-            }
-        );
+        this.entrypoint = new DevnetEntrypoint();
+        this.controller = this.entrypoint.createTransfersController();
     }
 
     getMnemonic() {
@@ -21,17 +19,27 @@ export class WalletService {
     }
 
     generateWallet(mnemonicString: string) {
-        const mnemonic = Mnemonic.fromString(mnemonicString);
-        const password = "my password";
-        const addressIndex = 0;
+        this.account = Account.newFromMnemonic(mnemonicString);
+        return Account.newFromMnemonic(mnemonicString);
+    }
 
-        const secretKey = mnemonic.deriveKey(addressIndex);
-        const userWallet = UserWallet.fromSecretKey({ secretKey: secretKey, password: password });
-        const jsonFileContent = userWallet.toJSON();
+    async sendTransaction(destination: string, amount: number) {
+        if (this.account) {
+            const destinationAddress = Address.newFromBech32(destination);
 
-        console.log(jsonFileContent);
+            this.account.nonce = await this.entrypoint.recallAccountNonce(this.account.address);
 
-        return jsonFileContent;
+            const transaction = await this.controller.createTransactionForNativeTokenTransfer(
+                this.account,
+                this.account.getNonceThenIncrement(),
+                {
+                    receiver: destinationAddress,
+                    nativeAmount: BigInt(amount),
+                }
+            );
+
+            const txHash = await this.entrypoint.sendTransaction(transaction);
+        }
     }
 
 }

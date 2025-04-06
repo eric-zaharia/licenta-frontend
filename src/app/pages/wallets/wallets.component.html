@@ -1,12 +1,21 @@
 <div class="wallets-container">
-    <div class="wallets-card">
-        <button mat-flat-button (click)="getMnemonic()">
-            Get Mnemonic
-        </button>
-        <p>{{mnemonic}}</p>
-        <button mat-flat-button (click)="getWallet(mnemonic)">
-            Get Wallet
-        </button>
-        <p>{{wallet}}</p>
-    </div>
+    <mat-card appearance="outlined" class="wallets-card">
+        <mat-card-header>
+            <mat-card-title>My wallet</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            @if (wallet === undefined) {
+                <p>Import a wallet!</p>
+            } @else {
+                <p>{{wallet.address.bech32()}}</p>
+            }
+            <br><br>
+        </mat-card-content>
+
+        <mat-card-footer>
+            <button mat-flat-button (click)="openDialog()">
+                Add wallet
+            </button>
+        </mat-card-footer>
+    </mat-card>
 </div>

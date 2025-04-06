@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>Add a new wallet</h2>
+<mat-dialog-content>
+    <section>
+        <mat-button-toggle-group
+            name="walletAction"
+            [(ngModel)]="selectedAction"
+            aria-label="Wallet Action"
+            [hideSingleSelectionIndicator]="true"
+        >
+            <mat-button-toggle value="create">Create wallet</mat-button-toggle>
+            <mat-button-toggle value="import">Import wallet</mat-button-toggle>
+        </mat-button-toggle-group>
+    </section>
+
+    <br>
+
+    @if (selectedAction === 'import') {
+        <mat-form-field>
+            <mat-label>Textarea</mat-label>
+            <textarea matInput [(ngModel)]="mnemonic"></textarea>
+        </mat-form-field>
+    } @else {
+        <button mat-flat-button (click)="getMnemonic()">
+            Generate mnemonic
+        </button>
+        <p *ngIf="mnemonic">{{mnemonic}}</p>
+    }
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button cdkFocusInitial (click)="onAddClick()">Add</button>
+</mat-dialog-actions>
