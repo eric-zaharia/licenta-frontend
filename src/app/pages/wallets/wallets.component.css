@@ -1,0 +1,26 @@
+/* Container to center the login card on the page */
+.wallets-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    background: #f3f4f6;
+}
+
+/* Card styling for a clean, modern look */
+.wallets-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    border-radius: 8px; /* Slightly rounded corners */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+    background-color: #fff; /* White card background */
+}
+
+/* Style the card title */
+mat-card-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: #333; /* Dark text for good contrast */
+}

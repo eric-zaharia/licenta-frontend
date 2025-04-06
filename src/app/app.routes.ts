@@ -8,6 +8,7 @@ import { AddPasswordComponent } from './pages/add-password/add-password.componen
 import { MyPasswordsComponent } from './pages/my-passwords/my-passwords.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
+import { WalletsComponent } from './pages/wallets/wallets.component';
 
 export const routes: Routes = [
     {
@@ -44,5 +45,10 @@ export const routes: Routes = [
     {
         path: 'reset-password',
         component: ResetPasswordComponent
+    },
+    {
+        path: 'wallets',
+        component: WalletsComponent,
+        canActivate: [authGuard]
     }
 ];

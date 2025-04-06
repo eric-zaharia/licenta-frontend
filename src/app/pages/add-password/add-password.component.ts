@@ -10,6 +10,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { of } from 'rxjs';
 import { NgForOf, NgIf } from '@angular/common';
 import { PasswordService } from '../../services/password/password.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-add-password',
@@ -32,6 +33,7 @@ import { PasswordService } from '../../services/password/password.service';
 export class AddPasswordComponent implements OnInit {
     private _formBuilder = inject(FormBuilder);
     private passwordService = inject(PasswordService);
+    private router: Router = inject(Router);
 
     firstFormGroup = this._formBuilder.group({
         passwordLabel: ['', Validators.required],
@@ -88,7 +90,14 @@ export class AddPasswordComponent implements OnInit {
                 mailRecipients: mailRecipients,
                 shardsNo: shardsNo,
                 selfCustodyShardsNo: selfCustodyShardsNo
-            }).subscribe();
+            }).subscribe({
+                next: result => {
+                    this.router.navigateByUrl('passwords');
+                },
+                error: err => {
+                    console.log(err);
+                }
+            });
         });
     }
 

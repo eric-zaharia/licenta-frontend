@@ -1,0 +1,12 @@
+<div class="wallets-container">
+    <div class="wallets-card">
+        <button mat-flat-button (click)="getMnemonic()">
+            Get Mnemonic
+        </button>
+        <p>{{mnemonic}}</p>
+        <button mat-flat-button (click)="getWallet(mnemonic)">
+            Get Wallet
+        </button>
+        <p>{{wallet}}</p>
+    </div>
+</div>
