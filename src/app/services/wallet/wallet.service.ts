@@ -19,6 +19,11 @@ export class WalletService {
         return Mnemonic.generate().toString();
     }
 
+    removeWalletData() {
+        localStorage.removeItem("encryptedMnemonic");
+        sessionStorage.removeItem("decryptedWallet");
+    }
+
     restoreWallet() {
         const storedData = sessionStorage.getItem('decryptedWallet');
         if (storedData) {
@@ -28,8 +33,7 @@ export class WalletService {
         }
 
         const encryptedMnemonic = localStorage.getItem('encryptedMnemonic');
-        if (!encryptedMnemonic) {
-            alert("No wallet data found.");
+        if (encryptedMnemonic == null) {
             return null;
         }
 

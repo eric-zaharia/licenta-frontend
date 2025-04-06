@@ -7,6 +7,7 @@ import { LoginRequest } from "../../model/login-request";
 import { BehaviorSubject } from 'rxjs';
 import { RegisterRequest } from '../../model/register-request';
 import { RegisterComponent } from '../../pages/register/register.component';
+import { WalletService } from '../wallet/wallet.service';
 
 const ACCESS_TOKEN_KEY = "accessToken";
 
@@ -22,7 +23,8 @@ export class AuthService {
 
     constructor(
         private router: Router,
-        private http: HttpClient
+        private http: HttpClient,
+        private walletService: WalletService,
     ) {
 
         const token = this.getTokens().accessToken;
@@ -60,6 +62,7 @@ export class AuthService {
         localStorage.removeItem(ACCESS_TOKEN_KEY);
         this.decodedToken = null;
         this.removeUserDetails();
+        this.walletService.removeWalletData();
         this._authStatus.next(false);
         this.router.navigateByUrl('/home');
     }
