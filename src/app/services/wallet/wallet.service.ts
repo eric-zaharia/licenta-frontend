@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Account, Address, Mnemonic, TestnetEntrypoint, ApiNetworkProvider } from '@multiversx/sdk-core/out';
 import * as CryptoJS from 'crypto-js';
+import { Transaction } from '../../model/transaction';
 
 @Injectable({
     providedIn: 'root',
@@ -15,11 +16,28 @@ export class WalletService {
         this.controller = this.entrypoint.createTransfersController();
     }
 
-    async getTransactions() {
+    async getTransactions(): Promise<Transaction[]> {
         const api = this.entrypoint.createNetworkProvider();
         if (this.account) {
             const url = `accounts/${this.account.address.toBech32()}/transactions`;
-            return await api.doGetGeneric(url);
+            return await api.doGetGeneric(url).then((result: any[]) => {
+                return result.map(entry => {
+                    const incoming = entry.sender !== this.account?.address.toBech32();
+                    let address: string;
+                    if (incoming) {
+                        address = entry.sender;
+                    } else {
+                        address = entry.receiver;
+                    }
+                    return {
+                        incoming: incoming,
+                        address: address,
+                        txHash: entry.txHash,
+                        timestamp: (new Date(entry.timestamp * 1000)).toLocaleString(),
+                        amount: (BigInt(entry.value) / BigInt(1000000000000000000n)).toString(),
+                    }
+                });
+            });
         }
 
         return [];

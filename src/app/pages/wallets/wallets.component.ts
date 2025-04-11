@@ -18,6 +18,8 @@ import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Account } from '@multiversx/sdk-core/out';
 import { MatIcon } from '@angular/material/icon';
+import { Transaction } from '../../model/transaction';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
     selector: 'app-wallets',
@@ -39,6 +41,7 @@ import { MatIcon } from '@angular/material/icon';
         MatInputModule,
         FormsModule,
         MatButtonModule,
+        MatTableModule,
     ],
     templateUrl: './wallets.component.html',
     styleUrl: './wallets.component.css'
@@ -49,7 +52,9 @@ export class WalletsComponent implements OnInit {
     readonly dialog = inject(MatDialog);
     userPassword: FormControl = new FormControl('');
     balance$: Promise<string> | undefined = undefined;
-    transactions$: Promise<any[]> | undefined = undefined;
+    transactions$: Promise<Transaction[] | void> | undefined = undefined;
+    displayedColumns: string[] = ['incoming', 'address', 'amount', 'timestamp'];
+    dataSource: Transaction[] = [];
 
     constructor(
         protected walletService: WalletService,
@@ -60,7 +65,12 @@ export class WalletsComponent implements OnInit {
     ngOnInit() {
         this.wallet = this.walletService.restoreWallet(this.userPassword.value);
         this.balance$ = this.walletService.getEgldBalance();
-        this.transactions$ = this.walletService.getTransactions();
+        this.transactions$ = this.walletService.getTransactions().then(
+            (result: Transaction[]) => {
+                this.dataSource = result;
+                console.log(result);
+            }
+        );
     }
 
     async getBalance() {
