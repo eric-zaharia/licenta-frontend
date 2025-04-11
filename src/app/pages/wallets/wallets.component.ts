@@ -19,6 +19,7 @@ import { Account } from '@multiversx/sdk-core/out';
 import { MatIcon } from '@angular/material/icon';
 import { Transaction } from '../../model/transaction';
 import { MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-wallets',
@@ -56,6 +57,7 @@ export class WalletsComponent implements OnInit {
 
     constructor(
         protected walletService: WalletService,
+        private router: Router,
     ) {
     }
 
@@ -118,15 +120,7 @@ export class WalletsComponent implements OnInit {
     }
 
     transfer() {
-        const addr = "erd12k59hnw5fzl9st5jdf4xgqkglakxumy5nvkpj4r572a8pn6ae36s9fz9gg";
-        this.walletService.sendTransaction(addr, 0.15).then(r => {
-            this.balance$ = this.walletService.getEgldBalance();
-            this.transactions$ = this.walletService.getTransactions().then(
-                (result: Transaction[]) => {
-                    this.dataSource = result;
-                }
-            );
-        });
+        this.router.navigateByUrl('/transfer');
     }
 }
 

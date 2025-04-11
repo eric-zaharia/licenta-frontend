@@ -9,6 +9,7 @@ import { MyPasswordsComponent } from './pages/my-passwords/my-passwords.componen
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { WalletsComponent } from './pages/wallets/wallets.component';
+import { TransferComponent } from './pages/transfer/transfer.component';
 
 export const routes: Routes = [
     {
@@ -50,4 +51,8 @@ export const routes: Routes = [
         path: 'wallets',
         component: WalletsComponent,
     },
+    {
+        path: 'transfer',
+        component: TransferComponent,
+    }
 ];
