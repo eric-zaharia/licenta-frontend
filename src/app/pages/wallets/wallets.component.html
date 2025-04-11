@@ -4,9 +4,9 @@
             <mat-card-title>My wallet</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-            @if (!existsWallet()) {
+            @if (!existsAccount()) {
                 <p>Import a wallet!</p>
-            } @else if(!walletLocked()) {
+            } @else if(!accountLocked()) {
                 <p>{{wallet?.address?.bech32()}}</p>
                 <p>Balance: {{balance$ | async}} EGLD</p>
                 <p>Transactions:</p>
@@ -36,9 +36,14 @@
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
+
+                <button mat-flat-button (click)="transfer()">
+                    Transfer
+                </button>
+
             }
 
-            @if (existsWallet() && walletLocked()) {
+            @if (existsAccount() && accountLocked()) {
                 <mat-form-field>
                     <mat-label>Enter your password</mat-label>
                     <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="userPassword"/>
@@ -65,8 +70,8 @@
                 Add wallet
             </button>
 
-            @if(existsWallet()) {
-                <button mat-flat-button (click)="removeWallet()">
+            @if(existsAccount()) {
+                <button mat-flat-button (click)="removeAccount()">
                     Remove wallet
                 </button>
             }

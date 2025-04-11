@@ -2,7 +2,6 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatButton, MatButtonModule, MatIconButton } from '@angular/material/button';
 import { WalletService } from '../../services/wallet/wallet.service';
 import { MatCard, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { Router } from '@angular/router';
 import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -48,7 +47,6 @@ import { MatTableModule } from '@angular/material/table';
 })
 export class WalletsComponent implements OnInit {
     wallet?: Account | null;
-    locked = false;
     readonly dialog = inject(MatDialog);
     userPassword: FormControl = new FormControl('');
     balance$: Promise<string> | undefined = undefined;
@@ -58,7 +56,6 @@ export class WalletsComponent implements OnInit {
 
     constructor(
         protected walletService: WalletService,
-        private router: Router,
     ) {
     }
 
@@ -68,24 +65,19 @@ export class WalletsComponent implements OnInit {
         this.transactions$ = this.walletService.getTransactions().then(
             (result: Transaction[]) => {
                 this.dataSource = result;
-                console.log(result);
             }
         );
     }
 
-    async getBalance() {
-        return await this.walletService.getEgldBalance();
+    accountLocked() {
+        return sessionStorage.getItem("decryptedWallet") === null && this.existsAccount()
     }
 
-    walletLocked() {
-        return sessionStorage.getItem("decryptedWallet") === null && this.existsWallet()
-    }
-
-    existsWallet(): boolean {
+    existsAccount(): boolean {
         return localStorage.getItem("encryptedMnemonic") !== null;
     }
 
-    removeWallet() {
+    removeAccount() {
         this.wallet = this.walletService.removeWalletData();
     }
 
@@ -99,6 +91,11 @@ export class WalletsComponent implements OnInit {
             if (result !== undefined) {
                 this.wallet = result.wallet;
                 this.balance$ = this.walletService.getEgldBalance();
+                this.transactions$ = this.walletService.getTransactions().then(
+                    (result: Transaction[]) => {
+                        this.dataSource = result;
+                    }
+                );
             }
         });
     }
@@ -113,6 +110,23 @@ export class WalletsComponent implements OnInit {
     unlockWallet() {
         this.wallet = this.walletService.restoreWallet(this.userPassword.value);
         this.balance$ = this.walletService.getEgldBalance();
+        this.transactions$ = this.walletService.getTransactions().then(
+            (result: Transaction[]) => {
+                this.dataSource = result;
+            }
+        );
+    }
+
+    transfer() {
+        const addr = "erd12k59hnw5fzl9st5jdf4xgqkglakxumy5nvkpj4r572a8pn6ae36s9fz9gg";
+        this.walletService.sendTransaction(addr, 0.15).then(r => {
+            this.balance$ = this.walletService.getEgldBalance();
+            this.transactions$ = this.walletService.getTransactions().then(
+                (result: Transaction[]) => {
+                    this.dataSource = result;
+                }
+            );
+        });
     }
 }
 
@@ -154,14 +168,14 @@ export class AddWalletDialog {
         this.mnemonic = this.walletService.getMnemonic();
     }
 
-    createWallet(mnemonic: string) {
+    createAccount(mnemonic: string) {
         console.log(mnemonic);
         this.wallet = this.walletService.generateWallet(mnemonic, this.userPassword.value);
     }
 
     onAddClick() {
         if (this.mnemonic && this.mnemonic != "") {
-            this.createWallet(this.mnemonic);
+            this.createAccount(this.mnemonic);
             this.dialogRef.close({wallet: this.wallet});
         }
     }

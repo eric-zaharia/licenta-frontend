@@ -34,7 +34,7 @@ export class WalletService {
                         address: address,
                         txHash: entry.txHash,
                         timestamp: (new Date(entry.timestamp * 1000)).toLocaleString(),
-                        amount: (BigInt(entry.value) / BigInt(1000000000000000000n)).toString(),
+                        amount: (Number(entry.value) / Number(1000000000000000000n)).toString(),
                     }
                 });
             });
@@ -47,7 +47,7 @@ export class WalletService {
         const api = this.entrypoint.createNetworkProvider();
         if (this.account) {
             const accountOnNetwork = await api.getAccount(this.account.address);
-            const balance = accountOnNetwork.balance / BigInt(1000000000000000000n);
+            const balance = Number(accountOnNetwork.balance) / Number(1000000000000000000n);
             return balance.toString();
         }
 
@@ -116,16 +116,19 @@ export class WalletService {
 
             this.account.nonce = await this.entrypoint.recallAccountNonce(this.account.address);
 
+            let computedAmount = amount * Number(1000000000000000000n);
+
             const transaction = await this.controller.createTransactionForNativeTokenTransfer(
                 this.account,
                 this.account.getNonceThenIncrement(),
                 {
                     receiver: destinationAddress,
-                    nativeAmount: BigInt(amount),
+                    nativeAmount: BigInt(computedAmount),
                 }
             );
 
             const txHash = await this.entrypoint.sendTransaction(transaction);
+            console.log(txHash);
         }
     }
 
