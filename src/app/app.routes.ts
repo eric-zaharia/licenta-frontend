@@ -49,6 +49,5 @@ export const routes: Routes = [
     {
         path: 'wallets',
         component: WalletsComponent,
-        canActivate: [authGuard]
     },
 ];

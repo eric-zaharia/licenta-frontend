@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Account, Address, Mnemonic, TestnetEntrypoint } from '@multiversx/sdk-core/out';
+import { Account, Address, Mnemonic, TestnetEntrypoint, ApiNetworkProvider } from '@multiversx/sdk-core/out';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -13,6 +13,27 @@ export class WalletService {
     constructor() {
         this.entrypoint = new TestnetEntrypoint();
         this.controller = this.entrypoint.createTransfersController();
+    }
+
+    async getTransactions() {
+        const api = this.entrypoint.createNetworkProvider();
+        if (this.account) {
+            const url = `accounts/${this.account.address.toBech32()}/transactions`;
+            return await api.doGetGeneric(url);
+        }
+
+        return [];
+    }
+
+    async getEgldBalance(): Promise<string> {
+        const api = this.entrypoint.createNetworkProvider();
+        if (this.account) {
+            const accountOnNetwork = await api.getAccount(this.account.address);
+            const balance = accountOnNetwork.balance / BigInt(1000000000000000000n);
+            return balance.toString();
+        }
+
+        return '0';
     }
 
     getMnemonic() {
@@ -63,7 +84,6 @@ export class WalletService {
 
         this.account = Account.newFromMnemonic(mnemonicString);
 
-        // const userPassword = prompt("Enter a password to secure your wallet:");
         const encryptedMnemonic = CryptoJS.AES.encrypt(mnemonicString, userPassword).toString();
         console.log(encryptedMnemonic);
 

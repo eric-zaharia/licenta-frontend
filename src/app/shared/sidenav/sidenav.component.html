@@ -24,16 +24,17 @@
                 </div>
             </a>
 
+            <a
+                mat-list-item
+                routerLink="wallets"
+                routerLinkActive="active-link">
+                <div class="icon-name-container">
+                    <mat-icon mat-list-icon>wallet</mat-icon>
+                    <span mat-line>My Wallet</span>
+                </div>
+            </a>
+
             @if (authenticated) {
-                <a
-                    mat-list-item
-                    routerLink="wallets"
-                    routerLinkActive="active-link">
-                    <div class="icon-name-container">
-                        <mat-icon mat-list-icon>wallet</mat-icon>
-                        <span mat-line>My Wallet</span>
-                    </div>
-                </a>
                 <a
                     mat-list-item
                     routerLink="passwords"

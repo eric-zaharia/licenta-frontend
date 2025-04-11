@@ -8,6 +8,8 @@
                 <p>Import a wallet!</p>
             } @else if(!walletLocked()) {
                 <p>{{wallet?.address?.bech32()}}</p>
+                <p>Balance: {{balance$ | async}} EGLD</p>
+                <p>Transactions:</p>
             }
 
             @if (existsWallet() && walletLocked()) {

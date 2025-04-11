@@ -7,20 +7,22 @@ import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/fo
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-    MAT_DIALOG_DATA, MatDialog,
+    MAT_DIALOG_DATA,
+    MatDialog,
     MatDialogActions,
     MatDialogContent,
     MatDialogRef,
     MatDialogTitle
 } from '@angular/material/dialog';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { NgIf } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Account } from '@multiversx/sdk-core/out';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-wallets',
+    selector: 'app-wallets',
     imports: [
+        AsyncPipe,
         MatButton,
         MatCard,
         MatCardHeader,
@@ -38,23 +40,31 @@ import { MatIcon } from '@angular/material/icon';
         FormsModule,
         MatButtonModule,
     ],
-  templateUrl: './wallets.component.html',
-  styleUrl: './wallets.component.css'
+    templateUrl: './wallets.component.html',
+    styleUrl: './wallets.component.css'
 })
 export class WalletsComponent implements OnInit {
     wallet?: Account | null;
     locked = false;
     readonly dialog = inject(MatDialog);
     userPassword: FormControl = new FormControl('');
+    balance$: Promise<string> | undefined = undefined;
+    transactions$: Promise<any[]> | undefined = undefined;
 
     constructor(
-        private walletService: WalletService,
+        protected walletService: WalletService,
         private router: Router,
     ) {
     }
 
     ngOnInit() {
         this.wallet = this.walletService.restoreWallet(this.userPassword.value);
+        this.balance$ = this.walletService.getEgldBalance();
+        this.transactions$ = this.walletService.getTransactions();
+    }
+
+    async getBalance() {
+        return await this.walletService.getEgldBalance();
     }
 
     walletLocked() {
@@ -78,11 +88,13 @@ export class WalletsComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result !== undefined) {
                 this.wallet = result.wallet;
+                this.balance$ = this.walletService.getEgldBalance();
             }
         });
     }
 
     hide = signal(true);
+
     clickEvent(event: MouseEvent) {
         this.hide.set(!this.hide());
         event.stopPropagation();
@@ -90,6 +102,7 @@ export class WalletsComponent implements OnInit {
 
     unlockWallet() {
         this.wallet = this.walletService.restoreWallet(this.userPassword.value);
+        this.balance$ = this.walletService.getEgldBalance();
     }
 }
 
@@ -144,6 +157,7 @@ export class AddWalletDialog {
     }
 
     hide = signal(true);
+
     clickEvent(event: MouseEvent) {
         this.hide.set(!this.hide());
         event.stopPropagation();
