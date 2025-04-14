@@ -1,1 +1,11 @@
-<p>confirm transfer</p>
+<h2 mat-dialog-title>Confirm transfer</h2>
+<mat-dialog-content>
+    <p>Address: {{data.address}}</p>
+    <p>Amount: {{data.amount}} EGLD</p>
+    <br>
+    <p>Estimated cost: {{estimatedCost$ | async}} EGLD</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button cdkFocusInitial (click)="onAddClick()">Confirm</button>
+</mat-dialog-actions>

@@ -1,24 +1,19 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { MatButton, MatButtonModule, MatIconButton } from "@angular/material/button";
+import { MatButton, MatButtonModule } from "@angular/material/button";
 import { MatCard, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle } from "@angular/material/card";
-import { MatError, MatFormField, MatFormFieldModule, MatLabel, MatSuffix } from "@angular/material/form-field";
-import { MatIcon } from "@angular/material/icon";
+import { MatFormField, MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatInput, MatInputModule } from "@angular/material/input";
 import { WalletService } from '../../services/wallet/wallet.service';
-import { Transaction } from '../../model/transaction';
-import { AddWalletDialog } from '../wallets/wallets.component';
 import {
     MAT_DIALOG_DATA,
-    MatDialog,
-    MatDialogActions,
-    MatDialogContent,
-    MatDialogRef,
-    MatDialogTitle
+    MatDialog, MatDialogActions, MatDialogContent,
+    MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { NgIf } from '@angular/common';
-import { Account } from '@multiversx/sdk-core/out';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-transfer',
@@ -34,18 +29,37 @@ import { Account } from '@multiversx/sdk-core/out';
         MatInput,
         MatLabel,
         ReactiveFormsModule,
-        MatFormFieldModule
+        MatFormFieldModule,
+        AsyncPipe
     ],
   templateUrl: './transfer.component.html',
   styleUrl: './transfer.component.css'
 })
 export class TransferComponent implements OnInit {
-    readonly address = new FormControl('', [Validators.required]);
+    readonly address = new FormControl('', [Validators.required, Validators.minLength(62), Validators.maxLength(62)]);
     readonly amount = new FormControl('', [Validators.required]);
+    balance$: Promise<string> | undefined = undefined;
+    balanceResolved: number = 0;
 
     readonly dialog = inject(MatDialog);
 
+    constructor(
+        private walletService: WalletService,
+        private router: Router,
+    ) {
+    }
+
     ngOnInit(): void {
+        let acc = this.walletService.restoreWallet("");
+        if (acc === null || acc === undefined) {
+            this.router.navigateByUrl("wallets");
+        }
+        this.balance$ = this.walletService.getEgldBalance().then(
+            (balance) => {
+                this.balanceResolved = Number(balance);
+                return balance;
+            }
+        );
     }
 
     openTransferDialog() {
@@ -59,9 +73,15 @@ export class TransferComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result !== undefined) {
-
+                this.router.navigateByUrl("wallets");
             }
         });
+    }
+
+    protected readonly Number = Number;
+
+    amountExceedsBalance() {
+        return this.balanceResolved < Number(this.amount.value);
     }
 }
 
@@ -75,11 +95,26 @@ export class TransferComponent implements OnInit {
         FormsModule,
         MatButtonModule,
         ReactiveFormsModule,
+        MatDialogActions,
+        MatDialogContent,
+        MatDialogTitle,
+        AsyncPipe,
     ],
 })
-export class ConfirmTransfer {
+export class ConfirmTransfer implements OnInit {
     readonly dialogRef = inject(MatDialogRef<ConfirmTransfer>);
     readonly data = inject(MAT_DIALOG_DATA);
+    estimatedCost$: Promise<string> | undefined = undefined;
+
+    constructor(
+        private router: Router,
+        private walletService: WalletService,
+    ) {
+    }
+
+    ngOnInit(): void {
+        this.estimatedCost$ = this.walletService.simulateTransactionCost(this.data.address, Number(this.data.amount));
+    }
 
     onNoClick(): void {
         this.dialogRef.close();
@@ -87,5 +122,10 @@ export class ConfirmTransfer {
 
     onAddClick() {
         this.dialogRef.close();
+        this.walletService.sendTransaction(this.data.address, Number(this.data.amount)).then(
+            (response) => {
+                this.router.navigateByUrl("wallets");
+            }
+        )
     }
 }

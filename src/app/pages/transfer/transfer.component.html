@@ -5,6 +5,7 @@
         </mat-card-header>
 
         <mat-card-content>
+            <h3>Balance: {{balance$ | async}} EGLD</h3>
             <mat-form-field>
                 <mat-label>Address</mat-label>
                 <input matInput placeholder="erd1xxx" [formControl]="address"/>
@@ -18,7 +19,10 @@
         </mat-card-content>
 
         <mat-card-footer>
-            <button mat-flat-button (click)="openTransferDialog()" disabled="{{address.invalid || amount.invalid}}">
+            <button mat-flat-button (click)="openTransferDialog()"
+                    disabled="{{address.invalid
+                    || amount.invalid
+                    || amountExceedsBalance()}}">
                 Transfer
             </button>
         </mat-card-footer>

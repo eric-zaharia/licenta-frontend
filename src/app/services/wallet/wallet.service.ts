@@ -132,4 +132,29 @@ export class WalletService {
         }
     }
 
+    async simulateTransactionCost(destination: string, amount: number) {
+        if (this.account) {
+            const api = this.entrypoint.createNetworkProvider();
+            const destinationAddress = Address.newFromBech32(destination);
+
+            this.account.nonce = await this.entrypoint.recallAccountNonce(this.account.address);
+
+            let computedAmount = amount * Number(1000000000000000000n);
+
+            const transaction = await this.controller.createTransactionForNativeTokenTransfer(
+                this.account,
+                this.account.getNonceThenIncrement(),
+                {
+                    receiver: destinationAddress,
+                    nativeAmount: BigInt(computedAmount),
+                }
+            );
+
+            const tx = await api.simulateTransaction(transaction);
+            return (Number(tx.gasPrice) * Number(tx.gasLimit) / Number(1000000000000000000n)).toString();
+        }
+
+        return '0';
+    }
+
 }
