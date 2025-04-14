@@ -52,7 +52,7 @@ export class WalletsComponent implements OnInit {
     userPassword: FormControl = new FormControl('');
     balance$: Promise<string> | undefined = undefined;
     transactions$: Promise<Transaction[] | void> | undefined = undefined;
-    displayedColumns: string[] = ['incoming', 'address', 'amount', 'timestamp'];
+    displayedColumns: string[] = ['address', 'amount', 'timestamp'];
     dataSource: Transaction[] = [];
 
     constructor(

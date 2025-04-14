@@ -72,4 +72,5 @@ mat-nav-list a.mat-list-item:hover {
 
 mat-sidenav-content {
     background: #f3f4f6;
+    scrollbar-gutter: stable;
 }
