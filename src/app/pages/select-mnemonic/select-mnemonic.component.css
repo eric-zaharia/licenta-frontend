@@ -64,3 +64,7 @@ mat-card-footer {
     justify-content: space-between;
     width: 40%;
 }
+
+::ng-deep .mat-horizontal-stepper-header {
+    pointer-events: none;
+}

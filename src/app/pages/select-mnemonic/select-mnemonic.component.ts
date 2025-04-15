@@ -31,7 +31,6 @@ import { MatIcon } from '@angular/material/icon';
         MatStepLabel,
         MatStepperNext,
         ReactiveFormsModule,
-        NgIf,
         MatFormField,
         MatInput,
         MatLabel,

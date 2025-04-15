@@ -56,7 +56,7 @@
                     }
 
                     <div>
-                        <button mat-button matStepperPrevious type="button">Previous</button>
+                        <button mat-button matStepperPrevious type="button" (click)="stepper.reset()">Previous</button>
                         <button mat-button matStepperNext type="button"
                                 [disabled]="getRequiredForDecryption() !== 0
                                 || decryptedPassword === ''
