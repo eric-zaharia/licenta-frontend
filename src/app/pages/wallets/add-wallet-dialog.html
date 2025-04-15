@@ -7,8 +7,9 @@
             aria-label="Wallet Action"
             [hideSingleSelectionIndicator]="true"
         >
-            <mat-button-toggle value="create">Create wallet</mat-button-toggle>
             <mat-button-toggle value="import">Import wallet</mat-button-toggle>
+            <mat-button-toggle *ngIf="authenticated" value="select">Saved wallets</mat-button-toggle>
+            <mat-button-toggle value="create">Create wallet</mat-button-toggle>
         </mat-button-toggle-group>
     </section>
 
@@ -19,25 +20,34 @@
             <mat-label>Textarea</mat-label>
             <textarea matInput [(ngModel)]="mnemonic"></textarea>
         </mat-form-field>
-    } @else {
+    } @else if (selectedAction === 'create') {
         <button mat-flat-button (click)="getMnemonic()">
             Generate mnemonic
         </button>
         <p *ngIf="mnemonic">{{mnemonic}}</p>
-    }
-    <mat-form-field>
-        <mat-label>Enter your password</mat-label>
-        <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="userPassword"/>
-        <button
-            mat-icon-button
-            matSuffix
-            (click)="clickEvent($event)"
-            [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide()"
-        >
-            <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+    } @else {
+        <p>hello</p>
+        <button mat-flat-button
+            (click)="selectSavedPassword()">
+            Select from saved wallets
         </button>
-    </mat-form-field>
+    }
+
+    @if (selectedAction !== 'select') {
+        <mat-form-field>
+            <mat-label>Enter your password</mat-label>
+            <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="userPassword"/>
+            <button
+                mat-icon-button
+                matSuffix
+                (click)="clickEvent($event)"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide()"
+            >
+                <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+        </mat-form-field>
+    }
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>

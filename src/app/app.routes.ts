@@ -10,6 +10,7 @@ import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { WalletsComponent } from './pages/wallets/wallets.component';
 import { TransferComponent } from './pages/transfer/transfer.component';
+import { SelectMnemonicComponent } from './pages/select-mnemonic/select-mnemonic.component';
 
 export const routes: Routes = [
     {
@@ -54,5 +55,10 @@ export const routes: Routes = [
     {
         path: 'transfer',
         component: TransferComponent,
+    },
+    {
+        path: 'select-mnemonic',
+        component: SelectMnemonicComponent,
+        canActivate: [authGuard]
     }
 ];

@@ -20,6 +20,7 @@ import { MatIcon } from '@angular/material/icon';
 import { Transaction } from '../../model/transaction';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
     selector: 'app-wallets',
@@ -143,15 +144,26 @@ export class WalletsComponent implements OnInit {
         MatIcon,
     ],
 })
-export class AddWalletDialog {
+export class AddWalletDialog implements OnInit {
     mnemonic: string = "";
     wallet?: Account;
     readonly dialogRef = inject(MatDialogRef<AddWalletDialog>);
     readonly data = inject(MAT_DIALOG_DATA);
     selectedAction: string = "import";
     userPassword: FormControl = new FormControl('');
+    authenticated: boolean = false;
 
-    constructor(private walletService: WalletService) {
+    constructor(
+        private walletService: WalletService,
+        private authService: AuthService,
+        private router: Router,
+    ) {
+    }
+
+    ngOnInit() {
+        this.authService.authStatus$.subscribe(authStatus => {
+            this.authenticated = authStatus;
+        })
     }
 
     onNoClick(): void {
@@ -179,5 +191,10 @@ export class AddWalletDialog {
     clickEvent(event: MouseEvent) {
         this.hide.set(!this.hide());
         event.stopPropagation();
+    }
+
+    selectSavedPassword() {
+        this.dialogRef.close();
+        this.router.navigateByUrl('select-mnemonic');
     }
 }
