@@ -8,5 +8,4 @@ import { SidenavComponent } from './shared/sidenav/sidenav.component';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  pkey: String = 'cheie';
 }

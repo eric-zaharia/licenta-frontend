@@ -13,6 +13,8 @@ import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-my-passwords',
@@ -32,12 +34,15 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/m
         MatCard,
         MatCardHeader,
         MatCardContent,
-        MatCardTitle
+        MatCardTitle,
+        CdkCopyToClipboard,
+        MatTooltip
     ],
     templateUrl: './my-passwords.component.html',
     styleUrl: './my-passwords.component.css'
 })
 export class MyPasswordsComponent implements OnInit {
+    tooltipMessage = 'Click to copy!';
     passwordService: PasswordService = inject(PasswordService);
     passwords: any[] = [];
     panelOpenState: any[] = [];
@@ -83,5 +88,10 @@ export class MyPasswordsComponent implements OnInit {
         let index = this.passwords.findIndex(password => password.id == passwordId);
         this.shards[index].push(curr);
         this.requiredForDecryption[index] -= 1;
+    }
+
+    onCopied(): void {
+        this.tooltipMessage = 'Copied!';
+        setTimeout(() => (this.tooltipMessage = 'Click to copy!'), 1500);
     }
 }
