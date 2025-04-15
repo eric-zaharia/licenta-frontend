@@ -11,6 +11,7 @@ import { of } from 'rxjs';
 import { NgForOf, NgIf } from '@angular/common';
 import { PasswordService } from '../../services/password/password.service';
 import { Router } from '@angular/router';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 
 @Component({
     selector: 'app-add-password',
@@ -26,6 +27,10 @@ import { Router } from '@angular/router';
         MatRadioGroup,
         NgForOf,
         NgIf,
+        MatCard,
+        MatCardContent,
+        MatCardHeader,
+        MatCardTitle,
     ],
     templateUrl: './add-password.component.html',
     styleUrl: './add-password.component.css'
