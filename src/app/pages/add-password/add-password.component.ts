@@ -10,7 +10,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { of } from 'rxjs';
 import { NgForOf, NgIf } from '@angular/common';
 import { PasswordService } from '../../services/password/password.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 
 @Component({
@@ -39,6 +39,7 @@ export class AddPasswordComponent implements OnInit {
     private _formBuilder = inject(FormBuilder);
     private passwordService = inject(PasswordService);
     private router: Router = inject(Router);
+    private route: ActivatedRoute = inject(ActivatedRoute);
 
     firstFormGroup = this._formBuilder.group({
         passwordLabel: ['', Validators.required],
@@ -54,6 +55,12 @@ export class AddPasswordComponent implements OnInit {
     });
 
     ngOnInit() {
+        this.route.queryParams.subscribe(params => {
+            if (params['mnemonic']) {
+                this.firstFormGroup.controls.password.setValue(params['mnemonic']);
+            }
+        });
+
         this.secondFormGroup.get('userShards')?.valueChanges.subscribe(value => {
             const shardsCount = parseInt(value ?? '0', 10);
             this.updateEmails(shardsCount);

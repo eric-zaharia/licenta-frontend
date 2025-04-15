@@ -25,6 +25,7 @@
             Generate mnemonic
         </button>
         <p *ngIf="mnemonic">{{mnemonic}}</p>
+        <button mat-flat-button *ngIf="authenticated && mnemonic" (click)="saveMnemonic()">Save mnemonic</button>
     } @else {
         <button mat-flat-button
             (click)="selectSavedPassword()">

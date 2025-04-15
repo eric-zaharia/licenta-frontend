@@ -197,4 +197,9 @@ export class AddWalletDialog implements OnInit {
         this.dialogRef.close();
         this.router.navigateByUrl('select-mnemonic');
     }
+
+    saveMnemonic() {
+        this.dialogRef.close();
+        this.router.navigateByUrl('password/add?mnemonic=' + this.mnemonic);
+    }
 }
