@@ -63,7 +63,10 @@
                 "serve": {
                     "builder": "@angular-builders/custom-webpack:dev-server",
                     "options": {
-                        "proxyConfig": "proxy.conf.json"
+                        "proxyConfig": "proxy.conf.json",
+                        "ssl": true,
+                        "sslKey": "ssl/localhost.key",
+                        "sslCert": "ssl/localhost.crt"
                     },
                     "configurations": {
                         "production": {
