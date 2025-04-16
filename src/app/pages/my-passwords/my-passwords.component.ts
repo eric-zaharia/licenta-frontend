@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { PasswordService } from '../../services/password/password.service';
-import { MatList, MatListItem } from '@angular/material/list';
+import { MatList } from '@angular/material/list';
 import {
     MatExpansionPanel,
     MatExpansionPanelDescription,
@@ -15,6 +15,14 @@ import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { MatTooltip } from '@angular/material/tooltip';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogActions,
+    MatDialogContent,
+    MatDialogRef,
+    MatDialogTitle
+} from '@angular/material/dialog';
 
 @Component({
     selector: 'app-my-passwords',
@@ -46,6 +54,8 @@ export class MyPasswordsComponent implements OnInit {
     passwordService: PasswordService = inject(PasswordService);
     passwords: any[] = [];
     panelOpenState: any[] = [];
+
+    readonly dialog = inject(MatDialog);
 
     shards: any[] = [];
     selfCustodyShards: any[] = [];
@@ -93,5 +103,63 @@ export class MyPasswordsComponent implements OnInit {
     onCopied(): void {
         this.tooltipMessage = 'Copied!';
         setTimeout(() => (this.tooltipMessage = 'Click to copy!'), 1500);
+    }
+
+    openDeleteModal(index: number) {
+        const dialogRef = this.dialog.open(DeletePasswordDialog, {
+            data: {
+                label: this.passwords[index].label,
+                passwordId: this.passwords[index].id,
+            },
+            panelClass: 'custom-dialog-container',
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result && result.refresh === true) {
+                this.passwordService.getAllUserPasswords().subscribe((passwords: any) => {
+                    this.passwords = passwords;
+                    for (let i = 0; i < passwords.length; i++) {
+                        this.panelOpenState.push(signal(false));
+                        this.shards.push([]);
+                        this.selfCustodyShards.push(0);
+                        this.currentSelfCustodyShard.push("");
+                        this.requiredForDecryption.push(0);
+                        this.decryptedPassword.push("");
+                    }
+                });
+            }
+        });
+    }
+}
+
+@Component({
+    selector: 'app-delete-passwords-dialog',
+    imports: [
+        MatButton,
+        MatDialogActions,
+        MatDialogTitle
+
+    ],
+    templateUrl: './delete-passwords-dialog.html',
+    styleUrl: './delete-passwords-dialog.css'
+})
+export class DeletePasswordDialog implements OnInit {
+    readonly dialogRef = inject(MatDialogRef<DeletePasswordDialog>);
+    readonly data = inject(MAT_DIALOG_DATA);
+    readonly passwordService = inject(PasswordService);
+
+    ngOnInit(): void {
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    onYesClick(): void {
+        this.passwordService.deletePassword(this.data.passwordId).subscribe(
+            result => {
+                this.dialogRef.close({refresh: true});
+            }
+        );
     }
 }

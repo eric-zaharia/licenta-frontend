@@ -24,6 +24,10 @@ export class PasswordService {
         return this.http.get('api/v1/password/' + passwordId);
     }
 
+    deletePassword(passwordId: any) {
+        return this.http.delete('api/v1/password/' + passwordId);
+    }
+
     async reconstructPassword(shards: string[]) {
         const uint8Shards = shards.map(sh => this.base64DecodeUnicode(sh));
         return new TextDecoder().decode(await combine(uint8Shards));
