@@ -16,13 +16,45 @@
                             <p>{{$index + 1}}. {{recipient.email}}</p>
                             <button
                                 mat-icon-button
-                                (click)="openDeleteModal($index)">
+                                (click)="deleteEmailRecipient($index)">
                                 <mat-icon fontIcon="delete"></mat-icon>
                             </button>
                         </div>
                     </mat-list-item>
                 }
             </mat-list>
+            @if (addAddress) {
+                <button
+                    mat-flat-button
+                    (click)="enableEmailForm()">
+                    Add new email address
+                </button>
+            }
+
+            @if (showEmailForm) {
+                <mat-form-field>
+                    <mat-label>Enter your email</mat-label>
+                    <input
+                        matInput
+                        placeholder="pat@example.com"
+                        [formControl]="currentEmailToAdd"
+                        required
+                    />
+                </mat-form-field>
+
+                <button
+                    mat-flat-button
+                    (click)="cancelAddEmail()">
+                    Cancel
+                </button>
+
+                <button
+                    mat-flat-button
+                    [disabled]="currentEmailToAdd.invalid"
+                    (click)="submitNewEmail()">
+                    Submit
+                </button>
+            }
         </mat-card-content>
         <mat-card-footer>
 

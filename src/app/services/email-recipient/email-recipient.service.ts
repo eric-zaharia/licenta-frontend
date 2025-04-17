@@ -17,4 +17,9 @@ export class EmailRecipientService {
     addEmailRecipient(body: {}) {
         return this.http.post('api/v1/recipient', body);
     }
+
+    deleteEmailRecipient(body: {}) {
+        console.log(body);
+        return this.http.delete('api/v1/recipient', { body: body });
+    }
 }

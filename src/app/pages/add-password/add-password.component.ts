@@ -12,6 +12,7 @@ import { NgForOf, NgIf } from '@angular/common';
 import { PasswordService } from '../../services/password/password.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
+import { EmailRecipientService } from '../../services/email-recipient/email-recipient.service';
 
 @Component({
     selector: 'app-add-password',
@@ -38,8 +39,11 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/m
 export class AddPasswordComponent implements OnInit {
     private _formBuilder = inject(FormBuilder);
     private passwordService = inject(PasswordService);
+    private emailRecipientService = inject(EmailRecipientService);
     private router: Router = inject(Router);
     private route: ActivatedRoute = inject(ActivatedRoute);
+
+    emailRecipients: any = []
 
     firstFormGroup = this._formBuilder.group({
         passwordLabel: ['', Validators.required],
@@ -79,6 +83,12 @@ export class AddPasswordComponent implements OnInit {
             const shardsCount = parseInt(this.secondFormGroup.get('userShards')?.value ?? '0', 10);
             this.updateEmails(shardsCount);
         }
+
+        this.emailRecipientService.getEmailRecipients().subscribe({
+            next: (data: any) => {
+                this.emailRecipients = data;
+            }
+        })
     }
 
     submitPassword() {
