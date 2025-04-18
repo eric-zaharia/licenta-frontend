@@ -5,7 +5,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatStepperModule } from '@angular/material/stepper';
-import { FormArray, FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+    AbstractControl,
+    FormArray,
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators
+} from '@angular/forms';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { of } from 'rxjs';
 import { NgForOf, NgIf } from '@angular/common';
@@ -13,6 +21,12 @@ import { PasswordService } from '../../services/password/password.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 import { EmailRecipientService } from '../../services/email-recipient/email-recipient.service';
+import { MatIcon } from '@angular/material/icon';
+
+interface EmailEntry {
+    choice: string;
+    custom: string;
+}
 
 @Component({
     selector: 'app-add-password',
@@ -32,6 +46,7 @@ import { EmailRecipientService } from '../../services/email-recipient/email-reci
         MatCardContent,
         MatCardHeader,
         MatCardTitle,
+        MatIcon,
     ],
     templateUrl: './add-password.component.html',
     styleUrl: './add-password.component.css'
@@ -51,8 +66,8 @@ export class AddPasswordComponent implements OnInit {
         password: ['', Validators.required],
     });
     secondFormGroup = this._formBuilder.group({
-        storeShards: ['Yes'],
-        userShards: ['0'],
+        storeShards: ['No'],
+        userShards: ['1'],
         emailSection: this._formBuilder.group({
             emails: this._formBuilder.array([])
         }),
@@ -105,7 +120,7 @@ export class AddPasswordComponent implements OnInit {
         this.passwordService.getShamirShards(password, shardsNo).then(resultedShards => {
             shards = resultedShards;
             let selfCustodyShardsNo = parseInt(this.secondFormGroup.value.userShards ?? '0');
-            let mailRecipients = this.secondFormGroup.value.emailSection?.emails;
+            let mailRecipients = this.getSelectedEmails();
             this.passwordService.uploadPassword({
                 label: label,
                 shards: shards,
@@ -141,9 +156,11 @@ export class AddPasswordComponent implements OnInit {
 
         while (emailsArray.length < count) {
             emailsArray.push(
-                this._formBuilder.control('', [Validators.required, Validators.email])
+                this.createEmailGroup()
             );
         }
+
+        console.log(emailsArray);
 
         while (emailsArray.length > count) {
             emailsArray.removeAt(emailsArray.length - 1);
@@ -158,5 +175,43 @@ export class AddPasswordComponent implements OnInit {
         this.secondFormGroup.controls.userShards.reset('0');
     }
 
+    isCustom(i: number) {
+        return this.emails.at(i).get('choice')!.value === 'custom';
+    }
+
+    private createEmailGroup(): FormGroup {
+        return this._formBuilder.group({
+            choice: ['', Validators.required],
+            custom: ['', Validators.email]
+        }, {
+            validators: this.requireIfCustom('choice', 'custom')
+        });
+    }
+
+    private requireIfCustom(choiceKey: string, customKey: string) {
+        return (g: AbstractControl) => {
+            const choice = g.get(choiceKey)!.value;
+            const custom = g.get(customKey)!;
+            if (choice === 'custom' && !custom.value) {
+                custom.setErrors({ required: true });
+                return { customRequired: true };
+            }
+            return null;
+        };
+    }
+
     protected readonly of = of;
+
+    getSelectedEmails(): string[] {
+        const emailsArray = this.secondFormGroup
+            .get('emailSection.emails') as FormArray;
+
+        return emailsArray.controls
+            .map(group => {
+                const choice = group.get('choice')!.value as string;
+                const custom = group.get('custom')!.value as string;
+                return choice === 'custom' ? custom : choice;
+            })
+            .filter(email => !!email);
+    }
 }
