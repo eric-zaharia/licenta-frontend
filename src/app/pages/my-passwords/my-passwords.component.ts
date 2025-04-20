@@ -11,7 +11,7 @@ import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { MatIcon } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -25,6 +25,8 @@ import {
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { NgIf } from '@angular/common';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Router } from '@angular/router';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
     selector: 'app-my-passwords',
@@ -39,7 +41,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
         MatFormField,
         MatInput,
         FormsModule,
-        MatIcon,
+        MatIconModule,
         MatIconButton,
         MatCard,
         MatCardHeader,
@@ -49,7 +51,8 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
         MatTooltip,
         MatProgressSpinner,
         NgIf,
-        MatPaginator
+        MatPaginator,
+        MatDivider,
     ],
     templateUrl: './my-passwords.component.html',
     styleUrl: './my-passwords.component.css'
@@ -57,6 +60,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 export class MyPasswordsComponent implements OnInit {
     tooltipMessage = 'Click to copy!';
     passwordService: PasswordService = inject(PasswordService);
+    router: Router = inject(Router);
     passwords: any[] = [];
     panelOpenState: any[] = [];
 
@@ -170,6 +174,10 @@ export class MyPasswordsComponent implements OnInit {
     }
 
     protected readonly Math = Math;
+
+    addPassword() {
+        this.router.navigateByUrl('/password/add');
+    }
 }
 
 @Component({
