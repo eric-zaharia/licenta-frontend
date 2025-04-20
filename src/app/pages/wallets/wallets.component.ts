@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { MatButton, MatButtonModule, MatIconButton } from '@angular/material/button';
 import { WalletService } from '../../services/wallet/wallet.service';
 import { MatCard, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -18,10 +18,11 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import { Account } from '@multiversx/sdk-core/out';
 import { MatIcon } from '@angular/material/icon';
 import { Transaction } from '../../model/transaction';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
     selector: 'app-wallets',
@@ -46,23 +47,31 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
         MatTableModule,
         MatProgressSpinner,
         NgIf,
+        MatPaginator,
     ],
     templateUrl: './wallets.component.html',
     styleUrl: './wallets.component.css'
 })
-export class WalletsComponent implements OnInit {
+export class WalletsComponent implements OnInit, AfterViewInit {
     wallet?: Account | null;
     readonly dialog = inject(MatDialog);
     userPassword: FormControl = new FormControl('');
     balance$: Promise<string> | undefined = undefined;
     transactions$: Promise<Transaction[] | void> | undefined = undefined;
     displayedColumns: string[] = ['address', 'amount', 'timestamp'];
-    dataSource: Transaction[] = [];
+    fetchedTransactions: Transaction[] = [];
+    dataSource: any;
+
+    @ViewChild(MatPaginator) paginator!: MatPaginator;
 
     constructor(
         protected walletService: WalletService,
         private router: Router,
     ) {
+    }
+
+    ngAfterViewInit() {
+        // this.dataSource.paginator = this.paginator;
     }
 
     ngOnInit() {
@@ -71,7 +80,11 @@ export class WalletsComponent implements OnInit {
         this.balance$ = this.walletService.getEgldBalance();
         this.transactions$ = this.walletService.getTransactions().then(
             (result: Transaction[]) => {
-                this.dataSource = result;
+                this.fetchedTransactions = result;
+                this.dataSource = new MatTableDataSource(this.fetchedTransactions);
+                setTimeout(() => {
+                    this.dataSource.paginator = this.paginator;
+                });
                 this.loading = false;
             }
         );
@@ -101,7 +114,11 @@ export class WalletsComponent implements OnInit {
                 this.balance$ = this.walletService.getEgldBalance();
                 this.transactions$ = this.walletService.getTransactions().then(
                     (result: Transaction[]) => {
-                        this.dataSource = result;
+                        this.fetchedTransactions = result;
+                        this.dataSource = new MatTableDataSource(this.fetchedTransactions);
+                        setTimeout(() => {
+                            this.dataSource.paginator = this.paginator;
+                        });
                     }
                 );
             }
@@ -121,7 +138,11 @@ export class WalletsComponent implements OnInit {
         this.balance$ = this.walletService.getEgldBalance();
         this.transactions$ = this.walletService.getTransactions().then(
             (result: Transaction[]) => {
-                this.dataSource = result;
+                this.fetchedTransactions = result;
+                this.dataSource = new MatTableDataSource(this.fetchedTransactions);
+                setTimeout(() => {
+                    this.dataSource.paginator = this.paginator;
+                });
             }
         );
     }
