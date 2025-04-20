@@ -24,6 +24,7 @@ import {
 } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { NgIf } from '@angular/common';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'app-my-passwords',
@@ -47,7 +48,8 @@ import { NgIf } from '@angular/common';
         CdkCopyToClipboard,
         MatTooltip,
         MatProgressSpinner,
-        NgIf
+        NgIf,
+        MatPaginator
     ],
     templateUrl: './my-passwords.component.html',
     styleUrl: './my-passwords.component.css'
@@ -69,6 +71,24 @@ export class MyPasswordsComponent implements OnInit {
 
     currentSelfCustodyShard: any[] = [];
 
+    pageSize = 5;
+    currentPage = 0;
+
+    paginatedPasswords: { index: number, value: any }[] = [];
+
+    updatePaginatedPasswords() {
+        const start = this.currentPage * this.pageSize;
+        this.paginatedPasswords = this.passwords
+            .slice(start, start + this.pageSize)
+            .map((value, i) => ({ index: start + i, value }));
+    }
+
+    onPageChange(event: PageEvent) {
+        this.pageSize = event.pageSize;
+        this.currentPage = event.pageIndex;
+        this.updatePaginatedPasswords();
+    }
+
     ngOnInit() {
         this.loading = true;
         this.passwordService.getAllUserPasswords().subscribe((passwords: any) => {
@@ -82,6 +102,7 @@ export class MyPasswordsComponent implements OnInit {
                 this.decryptedPassword.push("");
             }
 
+            this.updatePaginatedPasswords();
             this.loading = false;
         })
     }
@@ -135,6 +156,13 @@ export class MyPasswordsComponent implements OnInit {
                         this.requiredForDecryption.push(0);
                         this.decryptedPassword.push("");
                     }
+                    const totalPages = Math.ceil(this.passwords.length / this.pageSize);
+
+                    if (this.currentPage >= totalPages && this.currentPage > 0) {
+                        this.currentPage--;
+                    }
+
+                    this.updatePaginatedPasswords();
                     this.loading = false;
                 });
             }
