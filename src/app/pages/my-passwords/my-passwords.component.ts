@@ -130,6 +130,8 @@ export class MyPasswordsComponent implements OnInit {
             }
         });
     }
+
+    protected readonly Math = Math;
 }
 
 @Component({

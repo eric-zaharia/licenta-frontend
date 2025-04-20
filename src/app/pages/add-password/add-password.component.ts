@@ -160,8 +160,6 @@ export class AddPasswordComponent implements OnInit {
             );
         }
 
-        console.log(emailsArray);
-
         while (emailsArray.length > count) {
             emailsArray.removeAt(emailsArray.length - 1);
         }
@@ -213,5 +211,16 @@ export class AddPasswordComponent implements OnInit {
                 return choice === 'custom' ? custom : choice;
             })
             .filter(email => !!email);
+    }
+
+    majorityServer() {
+        let shardsNo = parseInt(this.firstFormGroup.value.shardsNo ?? '3', 10);
+        let selfCustodyShardsNo = parseInt(this.secondFormGroup.value.userShards ?? '0');
+
+        return Math.floor(shardsNo / 2) >= selfCustodyShardsNo;
+    }
+
+    clearCustom(index: number): void {
+        this.emails.at(index).get('custom')!.setValue('');
     }
 }

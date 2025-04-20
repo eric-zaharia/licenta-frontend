@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { merge } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-register',
@@ -26,7 +27,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         MatInput,
         MatLabel,
         MatSuffix,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        NgIf
     ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
@@ -38,6 +40,8 @@ export class RegisterComponent {
     readonly lastName = new FormControl('', [Validators.required]);
     readonly username = new FormControl('', [Validators.required]);
     readonly phoneNumber = new FormControl('', [Validators.required]);
+
+    errorMsg: boolean = false;
 
     errorMessage = signal('');
     hide = signal(true);
@@ -74,6 +78,14 @@ export class RegisterComponent {
             phoneNumber: this.phoneNumber.value !== null? this.phoneNumber.value: "",
             firstName: this.firstName.value !== null? this.firstName.value: "",
             lastName: this.lastName.value !== null? this.lastName.value: "",
+        }).subscribe({
+            next: (response: any) => {
+                this.errorMsg = false;
+                this.router.navigateByUrl('/login');
+            },
+            error: (error) => {
+                this.errorMsg = true;
+            }
         });
     }
 }

@@ -56,6 +56,7 @@
                     <input matInput [formControl]="phoneNumber">
                 </mat-form-field>
             </div>
+            <p *ngIf="errorMsg" style="color: red">Username/Email already linked to an account.</p>
         </mat-card-content>
         <mat-card-footer>
             <button mat-flat-button

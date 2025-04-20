@@ -18,7 +18,7 @@ export class AuthService {
     private jwtHelper = new JwtHelperService();
     private decodedToken: any;
 
-    private _authStatus = new BehaviorSubject<boolean>(false);
+    _authStatus = new BehaviorSubject<boolean>(false);
     authStatus$ = this._authStatus.asObservable();
 
     constructor(
@@ -34,27 +34,11 @@ export class AuthService {
     }
 
     public register(register: RegisterRequest) {
-        this.http.post('api/v1/auth/register', register).subscribe({
-            next: (response: any) => {
-                this.router.navigateByUrl('/login');
-            },
-            error: (error) => {
-                console.log(error);
-            }
-        })
+        return this.http.post('api/v1/auth/register', register);
     }
 
     public login(login: LoginRequest) {
-        this.http.post('api/v1/auth/authenticate', login).subscribe( {
-            next: (response: any) => {
-                this.saveTokenDetails(response.token);
-                this._authStatus.next(true);
-                this.router.navigateByUrl("/home");
-            },
-            error: (error) => {
-                console.log(error);
-            }
-        });
+        return this.http.post('api/v1/auth/authenticate', login);
     }
 
     public logout() {
@@ -87,7 +71,7 @@ export class AuthService {
         return { accessToken: localStorage.getItem(ACCESS_TOKEN_KEY) }
     }
 
-    private saveTokenDetails(token: string) {
+    saveTokenDetails(token: string) {
         this.setToken(token);
         let email = this.decodedToken.sub;
         let name = this.decodedToken.name;

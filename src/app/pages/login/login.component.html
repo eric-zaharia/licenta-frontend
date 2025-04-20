@@ -41,6 +41,7 @@
                     </button>
                 </mat-form-field>
             </div>
+            <p *ngIf="errorMsg" style="color: red">Incorrect email or password!</p>
         </mat-card-content>
         <mat-card-footer>
             <button mat-stroked-button (click)="forgotPassword()">

@@ -10,6 +10,7 @@ import { MatIcon } from '@angular/material/icon';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { routes } from '../../app.routes';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -26,6 +27,7 @@ import { routes } from '../../app.routes';
         MatIcon,
         MatCardFooter,
         MatButton,
+        NgIf,
     ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -33,6 +35,8 @@ import { routes } from '../../app.routes';
 export class LoginComponent {
     readonly email = new FormControl('', [Validators.required, Validators.email]);
     readonly password = new FormControl('', [Validators.required]);
+
+    errorMsg: boolean = false;
 
     errorMessage = signal('');
     hide = signal(true);
@@ -51,7 +55,18 @@ export class LoginComponent {
             {
                 email: this.email.value !== null? this.email.value : "",
                 password: this.password.value !== null ? this.password.value : "",
-            });
+            }).subscribe( {
+            next: (response: any) => {
+                this.authService.saveTokenDetails(response.token);
+                this.authService._authStatus.next(true);
+                this.router.navigateByUrl("/home");
+                this.errorMsg = false;
+            },
+            error: (error) => {
+                console.log(error);
+                this.errorMsg = true;
+            }
+        });
     }
 
     clickEvent(event: MouseEvent) {
