@@ -60,5 +60,9 @@ export const routes: Routes = [
         path: 'select-mnemonic',
         component: SelectMnemonicComponent,
         canActivate: [authGuard]
+    },
+    {
+        path: '',
+        component: HomeComponent,
     }
 ];
