@@ -4,71 +4,76 @@
             <mat-card-title>My wallet</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-            @if (!existsAccount()) {
-                <p>Import a wallet!</p>
-            } @else if(!accountLocked()) {
-                <p>{{wallet?.address?.bech32()}}</p>
-                <p>Balance: {{balance$ | async}} EGLD</p>
+            <div *ngIf="loading" class="spinner-container">
+                <mat-spinner [diameter]="25"></mat-spinner>
+            </div>
+            <div *ngIf="!loading">
+                @if (!existsAccount()) {
+                    <p>Import a wallet!</p>
+                } @else if(!accountLocked()) {
+                    <p>{{wallet?.address?.bech32()}}</p>
+                    <p>Balance: {{balance$ | async}} EGLD</p>
 
-                @if (dataSource.length > 0) {
-                    <p>Transactions:</p>
+                    @if (dataSource.length > 0) {
+                        <p>Transactions:</p>
 
-                    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
-                        <ng-container matColumnDef="incoming">
-                            <th mat-header-cell *matHeaderCellDef> Incoming </th>
-                            <td mat-cell *matCellDef="let element"> {{element.incoming}} </td>
-                        </ng-container>
+                            <ng-container matColumnDef="incoming">
+                                <th mat-header-cell *matHeaderCellDef> Incoming </th>
+                                <td mat-cell *matCellDef="let element"> {{element.incoming}} </td>
+                            </ng-container>
 
-                        <ng-container matColumnDef="address">
-                            <th mat-header-cell *matHeaderCellDef> Address </th>
-                            <td mat-cell *matCellDef="let element"> {{element.address}} </td>
-                        </ng-container>
+                            <ng-container matColumnDef="address">
+                                <th mat-header-cell *matHeaderCellDef> Address </th>
+                                <td mat-cell *matCellDef="let element"> {{element.address}} </td>
+                            </ng-container>
 
-                        <ng-container matColumnDef="amount">
-                            <th mat-header-cell *matHeaderCellDef> Amount </th>
-                            <td mat-cell *matCellDef="let element">
-                                {{element.incoming ? '+' : '-'}}{{element.amount}} EGLD
-                            </td>
-                        </ng-container>
+                            <ng-container matColumnDef="amount">
+                                <th mat-header-cell *matHeaderCellDef> Amount </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.incoming ? '+' : '-'}}{{element.amount}} EGLD
+                                </td>
+                            </ng-container>
 
-                        <ng-container matColumnDef="timestamp">
-                            <th mat-header-cell *matHeaderCellDef> Timestamp </th>
-                            <td mat-cell *matCellDef="let element"> {{element.timestamp}} </td>
-                        </ng-container>
+                            <ng-container matColumnDef="timestamp">
+                                <th mat-header-cell *matHeaderCellDef> Timestamp </th>
+                                <td mat-cell *matCellDef="let element"> {{element.timestamp}} </td>
+                            </ng-container>
 
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                    </table>
-                } @else {
-                    <p>No transactions yet</p>
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                    } @else {
+                        <p>No transactions yet</p>
+                    }
+
+                    <button mat-flat-button (click)="transfer()">
+                        Transfer
+                    </button>
+
                 }
 
-                <button mat-flat-button (click)="transfer()">
-                    Transfer
-                </button>
+                @if (existsAccount() && accountLocked()) {
+                    <mat-form-field>
+                        <mat-label>Enter your password</mat-label>
+                        <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="userPassword"/>
+                        <button
+                            mat-icon-button
+                            matSuffix
+                            (click)="clickEvent($event)"
+                            [attr.aria-label]="'Hide password'"
+                            [attr.aria-pressed]="hide()"
+                        >
+                            <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
 
-            }
-
-            @if (existsAccount() && accountLocked()) {
-                <mat-form-field>
-                    <mat-label>Enter your password</mat-label>
-                    <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="userPassword"/>
-                    <button
-                        mat-icon-button
-                        matSuffix
-                        (click)="clickEvent($event)"
-                        [attr.aria-label]="'Hide password'"
-                        [attr.aria-pressed]="hide()"
-                    >
-                        <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    <button mat-flat-button (click)="unlockWallet()">
+                        Unlock wallet
                     </button>
-                </mat-form-field>
-
-                <button mat-flat-button (click)="unlockWallet()">
-                    Unlock wallet
-                </button>
-            }
+                }
+            </div>
             <br><br>
         </mat-card-content>
 

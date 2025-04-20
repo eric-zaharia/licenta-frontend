@@ -21,6 +21,7 @@ import { Transaction } from '../../model/transaction';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-wallets',
@@ -43,6 +44,8 @@ import { AuthService } from '../../services/auth/auth.service';
         FormsModule,
         MatButtonModule,
         MatTableModule,
+        MatProgressSpinner,
+        NgIf,
     ],
     templateUrl: './wallets.component.html',
     styleUrl: './wallets.component.css'
@@ -63,11 +66,13 @@ export class WalletsComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.loading = true;
         this.wallet = this.walletService.restoreWallet(this.userPassword.value);
         this.balance$ = this.walletService.getEgldBalance();
         this.transactions$ = this.walletService.getTransactions().then(
             (result: Transaction[]) => {
                 this.dataSource = result;
+                this.loading = false;
             }
         );
     }
@@ -104,6 +109,7 @@ export class WalletsComponent implements OnInit {
     }
 
     hide = signal(true);
+    loading: boolean = true;
 
     clickEvent(event: MouseEvent) {
         this.hide.set(!this.hide());
