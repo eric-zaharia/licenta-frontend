@@ -19,10 +19,11 @@ import {
     MAT_DIALOG_DATA,
     MatDialog,
     MatDialogActions,
-    MatDialogContent,
     MatDialogRef,
     MatDialogTitle
 } from '@angular/material/dialog';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-my-passwords',
@@ -44,7 +45,9 @@ import {
         MatCardContent,
         MatCardTitle,
         CdkCopyToClipboard,
-        MatTooltip
+        MatTooltip,
+        MatProgressSpinner,
+        NgIf
     ],
     templateUrl: './my-passwords.component.html',
     styleUrl: './my-passwords.component.css'
@@ -54,6 +57,8 @@ export class MyPasswordsComponent implements OnInit {
     passwordService: PasswordService = inject(PasswordService);
     passwords: any[] = [];
     panelOpenState: any[] = [];
+
+    loading = false;
 
     readonly dialog = inject(MatDialog);
 
@@ -65,6 +70,7 @@ export class MyPasswordsComponent implements OnInit {
     currentSelfCustodyShard: any[] = [];
 
     ngOnInit() {
+        this.loading = true;
         this.passwordService.getAllUserPasswords().subscribe((passwords: any) => {
             this.passwords = passwords;
             for (let i = 0; i < passwords.length; i++) {
@@ -75,6 +81,8 @@ export class MyPasswordsComponent implements OnInit {
                 this.requiredForDecryption.push(0);
                 this.decryptedPassword.push("");
             }
+
+            this.loading = false;
         })
     }
 
@@ -116,6 +124,7 @@ export class MyPasswordsComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.refresh === true) {
+                this.loading = true;
                 this.passwordService.getAllUserPasswords().subscribe((passwords: any) => {
                     this.passwords = passwords;
                     for (let i = 0; i < passwords.length; i++) {
@@ -126,6 +135,7 @@ export class MyPasswordsComponent implements OnInit {
                         this.requiredForDecryption.push(0);
                         this.decryptedPassword.push("");
                     }
+                    this.loading = false;
                 });
             }
         });

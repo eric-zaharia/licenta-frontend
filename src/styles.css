@@ -10,3 +10,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     width: 700px;
     max-width: 95vw;
 }
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
