@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { combine, split } from 'shamir-secret-sharing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -8,7 +8,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import {
     AbstractControl,
     FormArray,
-    FormBuilder,
+    FormBuilder, FormControl,
     FormGroup,
     FormsModule,
     ReactiveFormsModule,
@@ -73,6 +73,14 @@ export class AddPasswordComponent implements OnInit {
         }),
     });
 
+    thirdForm = new FormControl('', [Validators.required]);
+    hide = signal(true);
+
+    clickEvent(event: MouseEvent) {
+        this.hide.set(!this.hide());
+        event.stopPropagation();
+    }
+
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
             if (params['mnemonic']) {
@@ -121,12 +129,14 @@ export class AddPasswordComponent implements OnInit {
             shards = resultedShards;
             let selfCustodyShardsNo = parseInt(this.secondFormGroup.value.userShards ?? '0');
             let mailRecipients = this.getSelectedEmails();
+            let zipPassword = this.thirdForm.value ?? "";
             this.passwordService.uploadPassword({
                 label: label,
                 shards: shards,
                 mailRecipients: mailRecipients,
                 shardsNo: shardsNo,
-                selfCustodyShardsNo: selfCustodyShardsNo
+                selfCustodyShardsNo: selfCustodyShardsNo,
+                zipPassword: zipPassword,
             }).subscribe({
                 next: result => {
                     this.router.navigateByUrl('passwords');
