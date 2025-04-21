@@ -80,11 +80,13 @@ export class MyPasswordsComponent implements OnInit {
 
     paginatedPasswords: { index: number, value: any }[] = [];
 
+    errorDecrypting: boolean[] = [];
+
     updatePaginatedPasswords() {
         const start = this.currentPage * this.pageSize;
         this.paginatedPasswords = this.passwords
             .slice(start, start + this.pageSize)
-            .map((value, i) => ({ index: start + i, value }));
+            .map((value, i) => ({index: start + i, value}));
     }
 
     onPageChange(event: PageEvent) {
@@ -104,6 +106,7 @@ export class MyPasswordsComponent implements OnInit {
                 this.currentSelfCustodyShard.push("");
                 this.requiredForDecryption.push(0);
                 this.decryptedPassword.push("");
+                this.errorDecrypting.push(false);
             }
 
             this.updatePaginatedPasswords();
@@ -122,9 +125,15 @@ export class MyPasswordsComponent implements OnInit {
 
     decryptPassword(passwordId: any) {
         let index = this.passwords.findIndex(password => password.id == passwordId);
-        this.passwordService.reconstructPassword(this.shards[index]).then(pw => {
-            this.decryptedPassword[index] = pw;
-        })
+        this.passwordService.reconstructPassword(this.shards[index])
+            .then(pw => {
+                this.decryptedPassword[index] = pw;
+            })
+            .catch(err => {
+                this.errorDecrypting[index] = true;
+                this.decryptedPassword[index] = "error";
+            })
+
     }
 
     addSelfCustodyShard(passwordId: any, curr: string) {
