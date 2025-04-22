@@ -62,7 +62,6 @@ export class UserProfileComponent implements OnInit {
                 this.loading = false;
             },
             error: (err: any) => {
-                console.log(err);
             }
         })
 

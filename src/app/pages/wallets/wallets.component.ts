@@ -202,7 +202,6 @@ export class AddWalletDialog implements OnInit {
     }
 
     createAccount(mnemonic: string) {
-        console.log(mnemonic);
         this.wallet = this.walletService.generateWallet(mnemonic, this.userPassword.value);
     }
 

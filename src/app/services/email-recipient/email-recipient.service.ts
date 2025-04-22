@@ -19,7 +19,6 @@ export class EmailRecipientService {
     }
 
     deleteEmailRecipient(body: {}) {
-        console.log(body);
         return this.http.delete('api/v1/recipient', { body: body });
     }
 }

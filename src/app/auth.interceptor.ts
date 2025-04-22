@@ -17,7 +17,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(authReq).pipe(
         filter(event => event instanceof HttpResponse),
         catchError((error) => {
-            console.log(error);
             return throwError(error);
         }),
     );

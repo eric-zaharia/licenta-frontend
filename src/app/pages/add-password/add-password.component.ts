@@ -142,7 +142,6 @@ export class AddPasswordComponent implements OnInit {
                     this.router.navigateByUrl('passwords');
                 },
                 error: err => {
-                    console.log(err);
                 }
             });
         });

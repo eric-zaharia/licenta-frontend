@@ -63,7 +63,6 @@ export class LoginComponent {
                 this.errorMsg = false;
             },
             error: (error) => {
-                console.log(error);
                 this.errorMsg = true;
             }
         });

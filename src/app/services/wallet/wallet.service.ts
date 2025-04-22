@@ -95,7 +95,6 @@ export class WalletService {
     }
 
     generateWallet(mnemonicString: string, userPassword: string) {
-        console.log(userPassword);
         if (sessionStorage.getItem('decryptedWallet') != null) {
             sessionStorage.removeItem('decryptedWallet');
         }
@@ -103,7 +102,6 @@ export class WalletService {
         this.account = Account.newFromMnemonic(mnemonicString);
 
         const encryptedMnemonic = CryptoJS.AES.encrypt(mnemonicString, userPassword).toString();
-        console.log(encryptedMnemonic);
 
         localStorage.setItem('encryptedMnemonic', encryptedMnemonic);
 
@@ -128,7 +126,6 @@ export class WalletService {
             );
 
             const txHash = await this.entrypoint.sendTransaction(transaction);
-            console.log(txHash);
         }
     }
 

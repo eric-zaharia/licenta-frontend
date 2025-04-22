@@ -90,7 +90,6 @@ export class SelectMnemonicComponent implements OnInit {
             this.decryptedPassword = pw;
         }).catch(() => {
             this.shardError$.next(true);
-            console.log(this.shardError$.value);
         })
     }
 
