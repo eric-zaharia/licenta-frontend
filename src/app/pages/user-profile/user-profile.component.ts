@@ -7,6 +7,9 @@ import { EmailRecipientService } from '../../services/email-recipient/email-reci
 import { MatList, MatListItem } from '@angular/material/list';
 import { AuthService } from '../../services/auth/auth.service';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatDivider } from '@angular/material/divider';
+import { NgIf } from '@angular/common';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-user-profile',
@@ -26,6 +29,11 @@ import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
         MatInput,
         MatLabel,
         MatFormField,
+        MatDivider,
+        MatFormField,
+        MatFormField,
+        MatProgressSpinner,
+        NgIf,
     ],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css'
@@ -37,6 +45,7 @@ export class UserProfileComponent implements OnInit {
     showEmailForm: boolean = false;
     currentEmailToAdd = new FormControl('', [Validators.required, Validators.email]);
     addAddress: boolean = true;
+    loading = false;
 
     constructor(
         private emailRecipientService: EmailRecipientService,
@@ -46,9 +55,11 @@ export class UserProfileComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.loading = true;
         this.emailRecipientService.getEmailRecipients().subscribe({
             next: (data: any) => {
                 this.emailRecipients = data;
+                this.loading = false;
             },
             error: (err: any) => {
                 console.log(err);
@@ -59,11 +70,13 @@ export class UserProfileComponent implements OnInit {
     }
 
     deleteEmailRecipient(index: number) {
+        this.loading = true;
         this.emailRecipientService.deleteEmailRecipient(this.emailRecipients[index]).subscribe({
             next: (data: any) => {
                 this.emailRecipientService.getEmailRecipients().subscribe({
                     next: (data: any) => {
                         this.emailRecipients = data;
+                        this.loading = false;
                     },
                     error: (err: any) => {
                         console.log(err);
@@ -88,6 +101,7 @@ export class UserProfileComponent implements OnInit {
     }
 
     submitNewEmail() {
+        this.loading = true;
         this.emailRecipientService.addEmailRecipient({email: this.currentEmailToAdd.value}).subscribe({
             next: (data: any) => {
                 this.addAddress = true;
@@ -96,6 +110,7 @@ export class UserProfileComponent implements OnInit {
                 this.emailRecipientService.getEmailRecipients().subscribe({
                     next: (data: any) => {
                         this.emailRecipients = data;
+                        this.loading = false;
                     },
                     error: (err: any) => {
                         console.log(err);
