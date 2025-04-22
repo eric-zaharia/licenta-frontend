@@ -1,1 +1,42 @@
-<p>Welcome to my app</p>
+<div class="home-container">
+    <mat-card appearance="outlined" class="home-card">
+        <mat-card-header>
+            <mat-card-title>Home</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-list>
+                <a
+                    mat-list-item>
+                    <span mat-line>My Wallet</span>
+                </a>
+
+                @if (authenticated) {
+                    <a
+                        mat-list-item>
+                        <span mat-line>My Passwords</span>
+                    </a>
+                    <a
+                        mat-list-item>
+                        <span mat-line>Add Password</span>
+
+                    </a>
+                    <a
+                        mat-list-item>
+                        <span mat-line>User Profile</span>
+                    </a>
+                } @else {
+                    <a
+                        mat-list-item>
+                        <span mat-line>Login</span>
+
+                    </a>
+                    <a
+                        mat-list-item>
+                        <span mat-line>Register</span>
+
+                    </a>
+                }
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+</div>
