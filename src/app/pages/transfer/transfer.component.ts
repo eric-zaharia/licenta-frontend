@@ -45,7 +45,7 @@ export class TransferComponent implements OnInit {
 
     constructor(
         private walletService: WalletService,
-        private router: Router,
+        protected router: Router,
     ) {
     }
 

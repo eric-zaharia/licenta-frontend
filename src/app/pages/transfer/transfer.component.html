@@ -19,12 +19,17 @@
         </mat-card-content>
 
         <mat-card-footer>
-            <button mat-flat-button (click)="openTransferDialog()"
-                    disabled="{{address.invalid
-                    || amount.invalid
-                    || amountExceedsBalance()}}">
-                Transfer
-            </button>
+            <div style="width: 100%; display: flex; justify-content: space-between">
+                <button mat-stroked-button (click)="router.navigateByUrl('/wallets')">
+                    Cancel
+                </button>
+                <button mat-flat-button (click)="openTransferDialog()"
+                        disabled="{{address.invalid
+                        || amount.invalid
+                        || amountExceedsBalance()}}">
+                    Preview transfer
+                </button>
+            </div>
         </mat-card-footer>
     </mat-card>
 </div>
