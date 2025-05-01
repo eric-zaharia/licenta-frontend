@@ -11,11 +11,11 @@
                 @if (!existsAccount()) {
                     <p>Import a wallet!</p>
                 } @else if(!accountLocked()) {
-                    <p>{{wallet?.address?.bech32()}}</p>
-                    <p>Balance: {{balance$ | async}} EGLD</p>
+                    <p><b>Address:</b> {{wallet?.address?.bech32()}}</p>
+                    <p><b>Balance:</b> {{balance$ | async}} EGLD</p>
 
                     @if (fetchedTransactions.length > 0) {
-                        <p>Transactions:</p>
+                        <p><b>Transactions:</b></p>
 
                         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
@@ -50,13 +50,14 @@
                         <p>No transactions yet</p>
                     }
 
-                    <button mat-flat-button (click)="transfer()">
-                        Transfer
-                    </button>
+<!--                    <button mat-flat-button (click)="transfer()">-->
+<!--                        Transfer-->
+<!--                    </button>-->
 
                 }
 
                 @if (existsAccount() && accountLocked()) {
+                    <p>Enter your password to unlock your wallet.</p>
                     <mat-form-field>
                         <mat-label>Enter your password</mat-label>
                         <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="userPassword"/>
@@ -70,8 +71,8 @@
                             <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
                         </button>
                     </mat-form-field>
-
-                    <button mat-flat-button (click)="unlockWallet()">
+                    <br>
+                    <button mat-flat-button (click)="unlockWallet()" [disabled]="userPassword.invalid">
                         Unlock wallet
                     </button>
                 }
@@ -80,15 +81,22 @@
         </mat-card-content>
 
         <mat-card-footer>
-            <button mat-flat-button (click)="openDialog()">
-                Add wallet
-            </button>
-
-            @if(existsAccount()) {
-                <button mat-flat-button (click)="removeAccount()">
-                    Remove wallet
-                </button>
-            }
+            <div style="display: flex; justify-content: space-between">
+                @if (!existsAccount()) {
+                    <button mat-stroked-button (click)="openDialog()">
+                        Add wallet
+                    </button>
+                } @else {
+                    <button mat-stroked-button (click)="removeAccount()">
+                        Remove wallet
+                    </button>
+                    @if (!accountLocked()) {
+                        <button mat-flat-button (click)="transfer()">
+                            Transfer
+                        </button>
+                    }
+                }
+            </div>
         </mat-card-footer>
     </mat-card>
 </div>

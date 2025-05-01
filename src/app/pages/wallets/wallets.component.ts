@@ -55,7 +55,7 @@ import { MatPaginator } from '@angular/material/paginator';
 export class WalletsComponent implements OnInit, AfterViewInit {
     wallet?: Account | null;
     readonly dialog = inject(MatDialog);
-    userPassword: FormControl = new FormControl('');
+    userPassword: FormControl = new FormControl('', [Validators.required]);
     balance$: Promise<string> | undefined = undefined;
     transactions$: Promise<Transaction[] | void> | undefined = undefined;
     displayedColumns: string[] = ['address', 'amount', 'timestamp'];
