@@ -4,7 +4,7 @@ import { WalletService } from '../../services/wallet/wallet.service';
 import { MatCard, MatCardContent, MatCardFooter, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInput, MatInputModule } from '@angular/material/input';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
     MAT_DIALOG_DATA,
     MatDialog,
@@ -177,7 +177,7 @@ export class AddWalletDialog implements OnInit {
     readonly dialogRef = inject(MatDialogRef<AddWalletDialog>);
     readonly data = inject(MAT_DIALOG_DATA);
     selectedAction: string = "import";
-    userPassword: FormControl = new FormControl('');
+    userPassword: FormControl = new FormControl('', [Validators.required]);
     authenticated: boolean = false;
 
     constructor(
@@ -225,7 +225,11 @@ export class AddWalletDialog implements OnInit {
     }
 
     saveMnemonic() {
-        this.dialogRef.close();
+        if (this.mnemonic && this.mnemonic != "") {
+            this.createAccount(this.mnemonic);
+            this.dialogRef.close({wallet: this.wallet});
+        }
+
         this.router.navigateByUrl('password/add?mnemonic=' + this.mnemonic);
     }
 }

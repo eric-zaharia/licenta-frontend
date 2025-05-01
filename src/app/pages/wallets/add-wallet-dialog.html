@@ -16,25 +16,21 @@
     <br>
 
     @if (selectedAction === 'import') {
-        <mat-form-field>
+        <mat-form-field style="width: 100%">
             <mat-label>Textarea</mat-label>
             <textarea matInput [(ngModel)]="mnemonic"></textarea>
         </mat-form-field>
     } @else if (selectedAction === 'create') {
-        <button mat-flat-button (click)="getMnemonic()">
+        <button *ngIf="mnemonic === ''" mat-flat-button (click)="getMnemonic()">
             Generate mnemonic
         </button>
         <p *ngIf="mnemonic">{{mnemonic}}</p>
-        <button mat-flat-button *ngIf="authenticated && mnemonic" (click)="saveMnemonic()">Save mnemonic</button>
     } @else {
-        <button mat-flat-button
-            (click)="selectSavedPassword()">
-            Select from saved wallets
-        </button>
+        <p>You can directly import one of your saved wallets</p>
     }
 
-    @if (selectedAction !== 'select') {
-        <mat-form-field>
+    @if (selectedAction !== 'select' && mnemonic !== '') {
+        <mat-form-field style="width: 100%">
             <mat-label>Enter your password</mat-label>
             <input matInput [type]="hide() ? 'password' : 'text'" [formControl]="userPassword"/>
             <button
@@ -51,5 +47,19 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button cdkFocusInitial (click)="onAddClick()" [disabled]="selectedAction === 'select'">Add</button>
+    <button mat-button *ngIf="selectedAction === 'create' && authenticated && mnemonic"
+            (click)="saveMnemonic()"
+            [disabled]="userPassword.invalid || mnemonic === ''">
+        Add and save mnemonic
+    </button>
+    <button mat-button
+            (click)="selectSavedPassword()"
+            *ngIf="selectedAction === 'select'">
+        Pick wallet
+    </button>
+    <button mat-button cdkFocusInitial (click)="onAddClick()"
+            *ngIf="selectedAction !== 'select'"
+            [disabled]="selectedAction === 'select' || userPassword.invalid || mnemonic === ''">
+        Add
+    </button>
 </mat-dialog-actions>
