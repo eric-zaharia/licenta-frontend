@@ -41,7 +41,17 @@
 
                     </mat-list>
                 } @else {
-                    <p>No email recipients found!</p>
+                    @if (addAddress) {
+                        <br>
+                        <p>No email recipients found!</p>
+                        <div style="display: flex; justify-content: flex-start;">
+                            <button
+                                mat-stroked-button
+                                (click)="enableEmailForm()">
+                                Add another email address
+                            </button>
+                        </div>
+                    }
                 }
             }
             @if (showEmailForm) {
